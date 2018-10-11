@@ -1,12 +1,7 @@
 package aufzug;
 
 public class Aufzug {
-<<<<<<< HEAD
-	public static final int DAUER_PRO_STOCK = 1;
-	
-=======
 	public static final int DAUER_PRO_STOCK = 3;
->>>>>>> branch 'master' of https://github.com/Elki007/AufzugSimulation.git
 	//Attribute eines Aufzugs
 	private int aufzugId;
 	private int altePosition;
