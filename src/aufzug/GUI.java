@@ -11,9 +11,7 @@ public class GUI extends Application{
 		//Hier würde das erste Fenster zur Konfiguration erscheinen
 		simSett = new Simulation_Einstellungen();
 		
-		int maxAufzug = 3;
-		int maxStockwerk = 3;
-		Settings sett = new Settings(maxAufzug, maxStockwerk,400,800);
+		Settings sett = new Settings(4,4,1366,768);
 		//simSett.show()
 		arg0.close();
 		

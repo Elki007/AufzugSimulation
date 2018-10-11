@@ -12,8 +12,8 @@ public class Simulation implements Runnable {
 	int anzPersProMin = 6;
 	int secBetweenSummon = (int)(60/anzPersProMin);
 	int summonTimer = 0;
-	int personenGarantiert = 1;
-	int personenZufallInStockwerkZuBeginn = 1;  
+	int personenGarantiert = 5;
+	int personenMaxInStockwerkZuBeginn = 3;  
 	int frame = 5; //seconds
 
 	private Aufzug[] aufzuege;
@@ -35,17 +35,10 @@ public class Simulation implements Runnable {
 		for (int i = 0; i < settings.maxAufzug; i++)
 			aufzuege[i] = new Aufzug(r.nextInt(settings.maxStockwerke), i);
 		
-		// Debug-Ausgabe für Fahrstühle zu Beginn der Simulation
-		for (Aufzug each : aufzuege) {
-			System.out.println("Aufzug Nr. " + each.getId() + ": Stockwerk -> " + each.getPosition());
-		}
-		System.out.println();
-		
-		// Erzeugen der Stockwerke mit zufälligen Leuten innerhalb der Stockwerke
 		for (int i=0; i< settings.maxStockwerke; i++) {
 			stockwerke.add(new Stockwerk());
 			System.out.print("Stockwerk: " + i + " \n");
-			int startAnzVonLeuten = (int)(personenGarantiert + ((personenZufallInStockwerkZuBeginn + 1) * Math.random()));
+			int startAnzVonLeuten = (int)(personenGarantiert + (personenMaxInStockwerkZuBeginn + 1) * Math.random());
 			
 			// einzelnen Stockwerken werden zufällig Leute zugeordnet + Debug-Ausgabe
 			for (int j = 0; j < startAnzVonLeuten; j++) {
@@ -55,7 +48,9 @@ public class Simulation implements Runnable {
 				stockwerke.get(i).leute.get(j).printTwo();
 			}
 		}
-		System.out.println("\n");					
+		System.out.println("\n");
+					
+		
 	}
 	
 	//getter zur Abfrage von Zuständen
