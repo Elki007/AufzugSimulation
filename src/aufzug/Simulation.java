@@ -12,13 +12,8 @@ public class Simulation implements Runnable {
 	int anzPersProMin = 6;
 	int secBetweenSummon = (int)(60/anzPersProMin);
 	int summonTimer = 0;
-<<<<<<< HEAD
 	int personenGarantiert = 1;
 	int personenZufallInStockwerkZuBeginn = 1;  
-=======
-	int personenGarantiert = 5;
-	int personenMaxInStockwerkZuBeginn = 3;  
->>>>>>> branch 'master' of https://github.com/Elki007/AufzugSimulation.git
 	int frame = 5; //seconds
 
 	private Aufzug[] aufzuege;
@@ -40,7 +35,6 @@ public class Simulation implements Runnable {
 		for (int i = 0; i < settings.maxAufzug; i++)
 			aufzuege[i] = new Aufzug(r.nextInt(settings.maxStockwerke), i);
 		
-<<<<<<< HEAD
 		// Debug-Ausgabe für Fahrstühle zu Beginn der Simulation
 		for (Aufzug each : aufzuege) {
 			System.out.println("Aufzug Nr. " + each.getId() + ": Stockwerk -> " + each.getPosition());
@@ -61,26 +55,7 @@ public class Simulation implements Runnable {
 				stockwerke.get(i).leute.get(j).printTwo();
 			}
 		}
-		System.out.println("\n");
-
-=======
-		for (int i=0; i< settings.maxStockwerke; i++) {
-			stockwerke.add(new Stockwerk());
-			System.out.print("Stockwerk: " + i + " \n");
-			int startAnzVonLeuten = (int)(personenGarantiert + (personenMaxInStockwerkZuBeginn + 1) * Math.random());
-			
-			// einzelnen Stockwerken werden zufällig Leute zugeordnet + Debug-Ausgabe
-			for (int j = 0; j < startAnzVonLeuten; j++) {
-				stockwerke.get(i).leute.add(new Person(i, settings.maxStockwerke));
-				System.out.print("\tPerson #" + j + " - ");
-				//print out initialized humans
-				stockwerke.get(i).leute.get(j).printTwo();
-			}
-		}
-		System.out.println("\n");
-					
-		
->>>>>>> branch 'master' of https://github.com/Elki007/AufzugSimulation.git
+		System.out.println("\n");					
 	}
 	
 	//getter zur Abfrage von Zuständen

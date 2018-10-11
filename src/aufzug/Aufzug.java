@@ -2,8 +2,6 @@ package aufzug;
 
 import java.util.Vector;
 
-import Gebaeude.Person;
-
 public class Aufzug {
 	public static final int DAUER_PRO_STOCK = 3;
 	//Attribute eines Aufzugs
