@@ -3,6 +3,7 @@ package aufzug;
 import java.util.Random;
 import java.util.Vector;
 
+
 public class Simulation implements Runnable {
 	//settings class
 	private Settings settings;
@@ -71,6 +72,26 @@ public class Simulation implements Runnable {
 	public Vector<Person> getAnzleuteAnDerEtage(int i) {
 		return stockwerke.get(i).leute;
 	}
+	
+	private void summonPerson() {
+		if (summonTimer >= secBetweenSummon) {
+        	int randomStockwerk = (int)((Math.random() * (settings.maxStockwerke)));
+			stockwerke.get(randomStockwerk).leute.add(new Person(randomStockwerk, settings.maxStockwerke));
+        	summonTimer = summonTimer % secBetweenSummon;            	
+        }
+	}
+	
+	// Vermindert Geduld und gibt Anzahl der Personen pro Stockwerk aus
+	private void updateLoyalty() {
+		System.out.print("|| ");
+		for (int i = 0; i < settings.maxStockwerke; i++) {
+        	//lower loyalty for each person, who isn't in an elevator
+        	stockwerke.get(i).geduldsenken(frame);
+        	//Show current amount for each flour
+        	System.out.print("  St-" + i + "  #P-" + stockwerke.get(i).leute.size() + "  ||");
+        }
+        System.out.print("\n");
+	}
 
 	@Override
 	public void run() {
@@ -78,9 +99,12 @@ public class Simulation implements Runnable {
 		while (true){
 			try {
 				Thread.sleep(frame*1000);
+				summonTimer +=4;
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			summonPerson();
+			updateLoyalty();
 			//Zufälliger Aufzug wird ausgewählt
 			int welcher = r.nextInt(settings.maxAufzug);//SimulationGUI.ANZAHL_AUFZUEGE);
 			//Zufälliges Stockwerk wird gesetzt

@@ -3,6 +3,7 @@ package aufzug;
 import java.util.Vector;
 
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -21,6 +22,7 @@ public class SimulationGUI extends Stage implements Observer{
 	//Attribute für die Darstellung
 	private Rectangle[] aufzuge;
 	private Rectangle[] stockwerke;
+	private Color[] colors;
 	private Vector<Circle> humans = new Vector<Circle>();
 	
 	//Simulations Attribute
@@ -28,15 +30,17 @@ public class SimulationGUI extends Stage implements Observer{
 	private Thread t;
 
 	int stockwerkHohe;
+	Pane root = new Pane();
 	
 	public SimulationGUI(Settings settings) {
 		super();
+		Platform.setImplicitExit(false);
 		//Titel setzen
 		this.setTitle("Aufzugssimulation Demo");
 		this.setWidth(settings.w);
 		this.setHeight(settings.h+44);
 		//Rechtecke werden auf einer leeren Pane platziert
-		Pane root = new Pane();
+		
 
 		//Simulation erzeugen und starten
 		//Simulation würde noch mehr Konfig Parameter übergeben bekommenz
@@ -46,6 +50,12 @@ public class SimulationGUI extends Stage implements Observer{
 		t.start();
 		
 		stockwerkHohe = (settings.h / settings.maxStockwerke);
+		
+		//color array
+		colors = new Color[settings.maxStockwerke];
+		for (int i=0;i<settings.maxStockwerke;i++) {
+			colors[i]=Color.rgb((int)(255-Math.random()*100),(int)(255-Math.random()*100),(int)(255-Math.random()*100));
+		}
 		
 		drawStockwerke();
 		root.getChildren().addAll(stockwerke);
@@ -62,12 +72,12 @@ public class SimulationGUI extends Stage implements Observer{
 	public void drawElevators() {
 		//Die Rechtecke für die Aufzüge werden initial gezeichnet
 		aufzuge = new Rectangle[settings.maxAufzug];
-		System.out.println("Etagen: "+settings.maxStockwerke+" #Aufzuge:"+settings.maxAufzug);
+		//System.out.println("Etagen: "+settings.maxStockwerke+" #Aufzuge:"+settings.maxAufzug);
 		for (int i=0; i<settings.maxAufzug; i++){
 			int pos = sim.getAufzugPosition(i);
 			int iReverted = Math.abs(pos-settings.maxStockwerke+1);
 			
-			System.out.println("pos="+pos+"  Rev="+iReverted+" ");
+			//System.out.println("pos="+pos+"  Rev="+iReverted+" ");
 			aufzuge[i] = new Rectangle(50 + i * 60, iReverted*stockwerkHohe, 50, stockwerkHohe);
 			aufzuge[i].setFill(Color.AQUA); 
 		}
@@ -77,8 +87,36 @@ public class SimulationGUI extends Stage implements Observer{
 		stockwerke = new Rectangle[settings.maxStockwerke];
 		for (int i=0; i<settings.maxStockwerke;i++) { 
 			stockwerke[i] = new Rectangle(0, i*stockwerkHohe, settings.w,stockwerkHohe); 
-			stockwerke[i].setFill(Color.rgb((int)(255-Math.random()*100),(int)(255-Math.random()*100),(int)(255-Math.random()*100)));
+			stockwerke[i].setFill(colors[i]);//Color.rgb((int)(255-Math.random()*100),(int)(255-Math.random()*100),(int)(255-Math.random()*100)));
 			//root.getChildren().add(stockwerke.get(i)); 
+		}
+	}
+	public void drawStockwerkeRechts() {
+		stockwerke = new Rectangle[settings.maxStockwerke];
+		for (int i=0; i<settings.maxStockwerke;i++) { 
+			stockwerke[i] = new Rectangle(settings.w/2, i*stockwerkHohe, settings.w,stockwerkHohe); 
+			stockwerke[i].setFill(colors[i]);//Color.rgb((int)(255-Math.random()*100),(int)(255-Math.random()*100),(int)(255-Math.random()*100)));
+			//root.getChildren().add(stockwerke.get(i)); 
+		}
+	}
+	
+	public void humanGoHome() {
+		//System.out.println(humans.size());
+		int overall =0;
+		int iiReverted;
+		for (int i=0; i<settings.maxStockwerke;i++) {
+			Vector<Person> current = sim.getAnzleuteAnDerEtage(i);
+			int number =0;
+			for (int p=0; p <current.size() ;p++) {
+				//System.out.println("Geduld: " +current.get(p).geduld);
+				if (current.get(p).geduld<=4) {//frame
+					//System.out.println("Person No: " +overall+"goes home" );
+					TranslateTransition anpassung = new TranslateTransition(Duration.seconds(6), humans.get(overall));//frame
+					anpassung.setByX(200);
+					anpassung.play();
+				}
+				overall++;
+			}
 		}
 	}
 	
@@ -105,7 +143,11 @@ public class SimulationGUI extends Stage implements Observer{
 				iiReverted = Math.abs(i-settings.maxStockwerke +1 );
 				
 				humans.add(new Circle(settings.w -100 - 30*number, stockwerkHohe*(iiReverted+0.5),radius));
-				humans.get(overall).setFill(Color.BLACK);
+				if (current.get(number).geduld<=4) { //frame
+					humans.get(overall).setFill(Color.RED);
+				}else {
+					humans.get(overall).setFill(Color.BLACK);
+				}
 				root.getChildren().add(humans.get(overall));
 				overall++;
 				number ++;
@@ -127,6 +169,45 @@ public class SimulationGUI extends Stage implements Observer{
 			if (aenderungPosition != 0)
 				fahre(i, aenderungPosition);
 		}
+		
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				humans.clear();
+				//call method for drawing
+				drawStockwerkeRechts();
+				root.getChildren().addAll(stockwerke);
+				drawHumans(root);
+				humanGoHome();
+				// TODO Auto-generated method stub	
+			}
+		});
+		
+		/*
+		System.out.println(humans.size());
+		int overall =0;
+		int iiReverted;
+		for (int i=0; i<settings.maxStockwerke;i++) {
+			Vector<Person> current = sim.getAnzleuteAnDerEtage(i);
+			int number =0;
+			for (int p=0; p <current.size() ;p++) {
+				//System.out.println("Geduld: " +current.get(p).geduld);
+				if (current.get(p).geduld<=0) {
+					System.out.println("Person No: " +overall+"goes home" );
+					TranslateTransition anpassung = new TranslateTransition(Duration.seconds(2), humans.get(overall));
+					anpassung.setByX(100);
+					anpassung.play();
+				}
+			}
+		}
+		*/
+		
+	}
+	private void addperson(int number) {
+		System.out.println("addperson");
+		TranslateTransition anpassung = new TranslateTransition(Duration.seconds(2), humans.get(number));
+		anpassung.setByX(-100);
+		anpassung.play();
 	}
 	
 	private void fahre(int aufzugNummer, int stockwerkAenderung){
@@ -134,7 +215,7 @@ public class SimulationGUI extends Stage implements Observer{
 		System.out.println("Aufzug " + aufzugNummer + " von " + (sim.getAufzugPosition(aufzugNummer)+stockwerkAenderung) + " in " + sim.getAufzugPosition(aufzugNummer));
 		
 		//Animation der Aufzüge
-		TranslateTransition anpassung = new TranslateTransition(Duration.seconds(Aufzug.DAUER_PRO_STOCK), aufzuge[aufzugNummer]);
+		TranslateTransition anpassung = new TranslateTransition(Duration.seconds(Aufzug.DAUER_PRO_STOCK*Math.abs(stockwerkAenderung)), aufzuge[aufzugNummer]);
 		anpassung.setByY(stockwerkAenderung*stockwerkHohe);
 		anpassung.play();
 	}
