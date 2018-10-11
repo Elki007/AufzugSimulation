@@ -27,7 +27,7 @@ public class SimulationGUI extends Stage implements Observer{
 		this.setTitle("Aufzugssimulation Demo");
 
 		//Simulation erzeugen und starten
-		//Simulation würde noch mehr Konfig Parameter übergeben bekommen
+		//Simulation würde noch mehr Konfig Parameter übergeben bekommenz
 		sim = new Simulation(ANZAHL_AUFZUEGE, this);
 		t = new Thread(sim);
 		t.start();

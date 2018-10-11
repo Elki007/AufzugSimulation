@@ -2,7 +2,6 @@ package aufzug;
 
 public class Aufzug {
 	public static final int DAUER_PRO_STOCK = 3;
-	
 	//Attribute eines Aufzugs
 	private int altePosition;
 	private int position;
