@@ -35,6 +35,12 @@ public class Simulation implements Runnable {
 		for (int i = 0; i < settings.maxAufzug; i++)
 			aufzuege[i] = new Aufzug(r.nextInt(settings.maxStockwerke), i);
 		
+		// Debug-Ausgabe für Fahrstühle zu Beginn der Simulation
+		for (Aufzug each : aufzuege) {
+			System.out.println("Aufzug Nr. " + each.getId() + ": Stockwerk -> " + each.getPosition());
+		}
+		System.out.println();
+		
 		for (int i=0; i< settings.maxStockwerke; i++) {
 			stockwerke.add(new Stockwerk());
 			System.out.print("Stockwerk: " + i + " \n");
