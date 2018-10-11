@@ -10,10 +10,10 @@ import javafx.util.Duration;
 
 public class SimulationGUI extends Stage implements Observer{
 	//Konstanten zur Konfiguration
-	public final static int ANZAHL_AUFZUEGE = 5;
+	//public final static int ANZAHL_AUFZUEGE = 5;
 	private Settings sett;
-	private final int PIXEL_HOEHE = 600;
-	private final int AUFZUG_PIXEL_HOEHE = PIXEL_HOEHE / Simulation.ANZAHL_STOCKWERKE;
+	//private final int PIXEL_HOEHE = 600;
+	//private final int AUFZUG_PIXEL_HOEHE = PIXEL_HOEHE / Simulation.ANZAHL_STOCKWERKE;
 	
 	//Attribute für die Darstellung
 	private Rectangle[] rechtecke;
@@ -22,10 +22,15 @@ public class SimulationGUI extends Stage implements Observer{
 	private Simulation sim;
 	private Thread t;
 
+	int stockwerkHohe;
+	
 	public SimulationGUI(Settings settings) {
 		super();
 		//Titel setzen
 		this.setTitle("Aufzugssimulation Demo");
+		this.setWidth(settings.w);
+		this.setHeight(settings.h);
+		
 
 		//Simulation erzeugen und starten
 		//Simulation würde noch mehr Konfig Parameter übergeben bekommenz
@@ -34,11 +39,13 @@ public class SimulationGUI extends Stage implements Observer{
 		t = new Thread(sim);
 		t.start();
 		
+		stockwerkHohe = (settings.h / settings.maxStockwerke);
+		
 		//Die Rechtecke für die Aufzüge werden initial gezeichnet
 		rechtecke = new Rectangle[sett.getMaxAufzug()];
 		for (int i=0; i<sett.getMaxAufzug(); i++){
 			int pos = sim.getAufzugPosition(i);
-			rechtecke[i] = new Rectangle(25+i*50, (sett.getFensterHoehe() - AUFZUG_PIXEL_HOEHE) - pos*AUFZUG_PIXEL_HOEHE, 50, AUFZUG_PIXEL_HOEHE);
+			rechtecke[i] = new Rectangle(50 + i * 60, stockwerkHohe*(settings.maxStockwerke-1), 50, stockwerkHohe);//(25+i*50, (sett.getFensterHoehe() - AUFZUG_PIXEL_HOEHE) - pos*AUFZUG_PIXEL_HOEHE, 50, AUFZUG_PIXEL_HOEHE);
 			rechtecke[i].setFill(Color.AQUA); 
 		}
 		
@@ -73,7 +80,7 @@ public class SimulationGUI extends Stage implements Observer{
 		
 		//Animation der Aufzüge
 		TranslateTransition anpassung = new TranslateTransition(Duration.seconds(Aufzug.DAUER_PRO_STOCK), rechtecke[aufzugNummer]);
-		anpassung.setByY(stockwerkAenderung*AUFZUG_PIXEL_HOEHE);
+		anpassung.setByY(stockwerkAenderung*stockwerkHohe);
 		anpassung.play();
 	}
 }
