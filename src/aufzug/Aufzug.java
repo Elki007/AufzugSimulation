@@ -3,7 +3,7 @@ package aufzug;
 import java.util.Vector;
 
 public class Aufzug {
-	public static final int DAUER_PRO_STOCK = 1;
+	public static final int DAUER_PRO_STOCK = 3;
 	//Attribute eines Aufzugs
 	private int aufzugId;
 	private int altePosition;
@@ -23,7 +23,6 @@ public class Aufzug {
 		this.gewichtAktuell = 0;
 		this.groesseMax = 10;
 		this.groesseAktuell = 0;
-		
 	}
 	
 	//Berechnet die Stockwerksveränderung und gibt sie zurück
@@ -61,6 +60,10 @@ public class Aufzug {
 	public int getDAUER_PRO_STOCK() {
 		return DAUER_PRO_STOCK;
 	}
+	
+	public int getAnzahlLeuteInFahrstuhl() {
+		return leuteImFahrstuhl.size();
+	}
 
 	public void setPersonSteigtEin(Person mustermann) {
 		leuteImFahrstuhl.addElement(mustermann);
@@ -69,6 +72,15 @@ public class Aufzug {
 	public boolean setPersonSteigtAus(Person mustermann) {
 		return leuteImFahrstuhl.remove(mustermann);
 	}
+	
+	public Person getPersonAnPosition(int pos) {
+		return leuteImFahrstuhl.get(pos);
+	}
+	
+	public void setPersonAnPositionSteigtAus(int pos) {
+		leuteImFahrstuhl.remove(pos);
+	}
+
 	
 	//Setzen einer neuen Position und speichern der alten Position
 	public void setPosition(int position) {
