@@ -10,6 +10,9 @@ public class GUI extends Application{
 	public void start(Stage arg0) throws Exception {
 		//Hier würde das erste Fenster zur Konfiguration erscheinen
 		simSett = new Simulation_Einstellungen();
+		
+		Settings sett = new Settings(4,4,1366,780);
+		
 		//simSett.show()
 		arg0.close();
 		
