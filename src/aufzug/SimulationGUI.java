@@ -39,13 +39,13 @@ public class SimulationGUI extends Stage implements Observer{
 		t = new Thread(sim);
 		t.start();
 		
-		stockwerkHohe = (settings.h / settings.maxStockwerke);
+		stockwerkHohe = (settings.h / settings.maxStockwerke-1);
 		
 		//Die Rechtecke für die Aufzüge werden initial gezeichnet
 		rechtecke = new Rectangle[settings.maxAufzug];
 		for (int i=0; i<settings.maxAufzug; i++){
 			int pos = sim.getAufzugPosition(i);
-			rechtecke[i] = new Rectangle(50 + i * 60, stockwerkHohe*(settings.maxStockwerke-1), 50, stockwerkHohe);//(25+i*50, (sett.getFensterHoehe() - AUFZUG_PIXEL_HOEHE) - pos*AUFZUG_PIXEL_HOEHE, 50, AUFZUG_PIXEL_HOEHE);
+			rechtecke[i] = new Rectangle(50 + i * 60, stockwerkHohe*(pos), 50, stockwerkHohe);//(25+i*50, (sett.getFensterHoehe() - AUFZUG_PIXEL_HOEHE) - pos*AUFZUG_PIXEL_HOEHE, 50, AUFZUG_PIXEL_HOEHE);
 			rechtecke[i].setFill(Color.AQUA); 
 		}
 		
