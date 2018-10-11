@@ -10,7 +10,7 @@ import javafx.util.Duration;
 
 public class SimulationGUI extends Stage implements Observer{
 	//Konstanten zur Konfiguration
-	public final static int ANZAHL_AUFZUEGE = 3;
+	public final static int ANZAHL_AUFZUEGE = 5;
 	private final int PIXEL_HOEHE = 600;
 	private final int AUFZUG_PIXEL_HOEHE = PIXEL_HOEHE / Simulation.ANZAHL_STOCKWERKE;
 	

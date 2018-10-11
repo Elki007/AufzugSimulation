@@ -19,8 +19,8 @@ public class Simulation implements Runnable {
 		aufzuege = new Aufzug[anzahl];
 		r = new Random();
 		//Initiales erzeugen der Aufzüge in zufälligem Stockwerk
-		for (int i=0; i<anzahl; i++)
-			aufzuege[i] = new Aufzug(r.nextInt(ANZAHL_STOCKWERKE));
+		for (int i = 0; i < anzahl; i++)
+			aufzuege[i] = new Aufzug(r.nextInt(ANZAHL_STOCKWERKE), i);
 	}
 	
 	//getter zur Abfrage von Zuständen
