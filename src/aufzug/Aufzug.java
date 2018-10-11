@@ -23,7 +23,6 @@ public class Aufzug {
 		this.gewichtAktuell = 0;
 		this.groesseMax = 10;
 		this.groesseAktuell = 0;
-		
 	}
 	
 	//Berechnet die Stockwerksveränderung und gibt sie zurück
@@ -62,8 +61,12 @@ public class Aufzug {
 		return DAUER_PRO_STOCK;
 	}
 
-	public void setNeuePersonInAufzug() {
-		
+	public void setPersonSteigtEin(Person mustermann) {
+		leuteImFahrstuhl.addElement(mustermann);
+	}
+	
+	public boolean setPersonSteigtAus(Person mustermann) {
+		return leuteImFahrstuhl.remove(mustermann);
 	}
 	
 	//Setzen einer neuen Position und speichern der alten Position
