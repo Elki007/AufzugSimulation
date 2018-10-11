@@ -1,9 +1,21 @@
 package aufzug;
 
 import java.util.Random;
+import java.util.Vector;
 
 public class Simulation implements Runnable {
+	//settings class
+	private Settings settings;
+	
 	//Attribute der Simulation
+	Vector<Stockwerk> stockwerke = new Vector<Stockwerk>();
+	int anzPersProMin = 6;
+	int secBetweenSummon = (int)(60/anzPersProMin);
+	int summonTimer = 0;
+	int personenGarantiert = 1;
+	int personenZufallInStockwerkZuBeginn = 1;  
+	int frame = 5; //seconds
+
 	private Aufzug[] aufzuege;
 	
 	//Zufallszahlen Generator
@@ -12,8 +24,7 @@ public class Simulation implements Runnable {
 	//Link zur GUI über den Observer
 	private Observer observer;
 	
-	//settings class
-	private Settings settings;
+
 	
 	public Simulation(Settings settings, Observer o){
 		this.settings=settings;
@@ -23,6 +34,29 @@ public class Simulation implements Runnable {
 		//Initiales erzeugen der Aufzüge in zufälligem Stockwerk
 		for (int i = 0; i < settings.maxAufzug; i++)
 			aufzuege[i] = new Aufzug(r.nextInt(settings.maxStockwerke), i);
+		
+		// Debug-Ausgabe für Fahrstühle zu Beginn der Simulation
+		for (Aufzug each : aufzuege) {
+			System.out.println("Aufzug Nr. " + each.getId() + ": Stockwerk -> " + each.getPosition());
+		}
+		System.out.println();
+		
+		// Erzeugen der Stockwerke mit zufälligen Leuten innerhalb der Stockwerke
+		for (int i=0; i< settings.maxStockwerke; i++) {
+			stockwerke.add(new Stockwerk());
+			System.out.print("Stockwerk: " + i + " \n");
+			int startAnzVonLeuten = (int)(personenGarantiert + ((personenZufallInStockwerkZuBeginn + 1) * Math.random()));
+			
+			// einzelnen Stockwerken werden zufällig Leute zugeordnet + Debug-Ausgabe
+			for (int j = 0; j < startAnzVonLeuten; j++) {
+				stockwerke.get(i).leute.add(new Person(i, settings.maxStockwerke));
+				System.out.print("\tPerson #" + j + " - ");
+				//print out initialized humans
+				stockwerke.get(i).leute.get(j).printTwo();
+			}
+		}
+		System.out.println("\n");
+
 	}
 	
 	//getter zur Abfrage von Zuständen
@@ -39,9 +73,8 @@ public class Simulation implements Runnable {
 		//Dauerschleife zur Simulation
 		while (true){
 			try {
-				Thread.sleep(3000);
+				Thread.sleep(frame*1000);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			//Zufälliger Aufzug wird ausgewählt
