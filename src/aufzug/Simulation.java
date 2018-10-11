@@ -83,14 +83,14 @@ public class Simulation implements Runnable {
 	
 	// Vermindert Geduld und gibt Anzahl der Personen pro Stockwerk aus
 	private void updateLoyalty() {
-		System.out.print("|| ");
+		//System.out.print("|| ");
 		for (int i = 0; i < settings.maxStockwerke; i++) {
         	//lower loyalty for each person, who isn't in an elevator
         	stockwerke.get(i).geduldsenken(frame);
         	//Show current amount for each flour
-        	System.out.print("  St-" + i + "  #P-" + stockwerke.get(i).leute.size() + "  ||");
+        	//System.out.print("  St-" + i + "  #P-" + stockwerke.get(i).leute.size() + "  ||");
         }
-        System.out.print("\n");
+        //System.out.print("\n");
 	}
 
 	@Override
@@ -110,7 +110,7 @@ public class Simulation implements Runnable {
 			//Zufälliges Stockwerk wird gesetzt
 			aufzuege[welcher].setPosition(r.nextInt(settings.maxStockwerke));
 			
-			// Jeden Aufzug durchgehen 
+			// Jeden Aufzug durchgehen
 			for (Aufzug aufzug : aufzuege) {
 				// Gehe Leute im Stockwerk vom Aufzug durch (von hinten beginnend)
 				for (int i = (stockwerke.get(aufzug.getPosition()).leute.size()-1); i >= 0; i--) {
@@ -122,6 +122,7 @@ public class Simulation implements Runnable {
 						stockwerke.get(aufzug.getPosition()).leute.remove(i);
 					}
 				}
+				/*
 				// Ist eine Personen im Aufzug am Ziel? (von hinten beginnend)
 				for (int i = (aufzug.getAnzahlLeuteInFahrstuhl() - 1); i >= 0; i--) {
 					// Wenn eine Person ihr Zielstockwerk erreicht 
@@ -131,19 +132,20 @@ public class Simulation implements Runnable {
 						aufzug.getPersonAnPosition(i).amZiel = true;
 					}
 				}
+				*/
 			}			
 			
 			// Ausgabe: Aufzüge -> Stockwerk
 			for (Aufzug each : aufzuege) {
-				System.out.print("A-ID(" + each.getId() + ") in " + each.getPosition() + " mit " + each.getAnzahlLeuteInFahrstuhl() + "\t");
+				System.out.print("A" + each.getId() + " in S" + each.getPosition() + " mit P-" + each.getAnzahlLeuteInFahrstuhl() + "\n");
 			}
 			System.out.println();
 			
 			// Ausgabe: Stockwerk -> Personen 
 			for (int i = 0; i < settings.getMaxStockwerk(); i++) {
-				System.out.print("Stw-" + i + " mit " + stockwerke.get(i).leute.size() + "   ||   ");
+				System.out.print("S" + i + " mit " + stockwerke.get(i).leute.size() + "\n");
 			}
-			System.out.println("\n");
+			System.out.println("\n##########################\n");
 			
 			//Veränderung --> Update von GUI wird verlangt
 			observer.update();
