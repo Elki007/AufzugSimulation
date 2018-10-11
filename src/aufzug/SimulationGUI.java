@@ -11,6 +11,7 @@ import javafx.util.Duration;
 public class SimulationGUI extends Stage implements Observer{
 	//Konstanten zur Konfiguration
 	public final static int ANZAHL_AUFZUEGE = 5;
+	private Settings sett;
 	private final int PIXEL_HOEHE = 600;
 	private final int AUFZUG_PIXEL_HOEHE = PIXEL_HOEHE / Simulation.ANZAHL_STOCKWERKE;
 	
@@ -28,16 +29,16 @@ public class SimulationGUI extends Stage implements Observer{
 
 		//Simulation erzeugen und starten
 		//Simulation würde noch mehr Konfig Parameter übergeben bekommenz
-		Settings sett = settings; //? do we really need this?
+		sett = settings; //? do we really need this?
 		sim = new Simulation(settings, this);
 		t = new Thread(sim);
 		t.start();
 		
 		//Die Rechtecke für die Aufzüge werden initial gezeichnet
-		rechtecke = new Rectangle[ANZAHL_AUFZUEGE];
-		for (int i=0; i<ANZAHL_AUFZUEGE; i++){
+		rechtecke = new Rectangle[sett.getMaxAufzug()];
+		for (int i=0; i<sett.getMaxAufzug(); i++){
 			int pos = sim.getAufzugPosition(i);
-			rechtecke[i] = new Rectangle(25+i*50, (PIXEL_HOEHE-AUFZUG_PIXEL_HOEHE) - pos*AUFZUG_PIXEL_HOEHE, 50, AUFZUG_PIXEL_HOEHE);
+			rechtecke[i] = new Rectangle(25+i*50, (sett.getFensterHoehe() - AUFZUG_PIXEL_HOEHE) - pos*AUFZUG_PIXEL_HOEHE, 50, AUFZUG_PIXEL_HOEHE);
 			rechtecke[i].setFill(Color.AQUA); 
 		}
 		
@@ -46,7 +47,7 @@ public class SimulationGUI extends Stage implements Observer{
 		root.getChildren().addAll(rechtecke);
 		
 		//Scene graph wird gesetzt
-		Scene scene = new Scene(root, (ANZAHL_AUFZUEGE+1)*50, PIXEL_HOEHE);
+		Scene scene = new Scene(root, (sett.getMaxAufzug() + 1)*50, sett.getFensterHoehe());
 		this.setScene(scene);
 	}
 	
@@ -58,7 +59,7 @@ public class SimulationGUI extends Stage implements Observer{
 	@Override
 	public void update() {
 		//Über alle Aufzüge iterieren und bei möglicher Positionsänderung anzeigen
-		for (int i=0; i<ANZAHL_AUFZUEGE; i++){
+		for (int i=0; i<sett.getMaxAufzug(); i++){
 			int aenderungPosition = sim.getAufzugPositionAenderung(i);
 			//Bei Positionsänderung, Animation
 			if (aenderungPosition != 0)
