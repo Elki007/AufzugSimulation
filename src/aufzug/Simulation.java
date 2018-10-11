@@ -148,7 +148,7 @@ public class Simulation implements Runnable {
 			System.out.println("\n##########################\n");
 			
 			//Veränderung --> Update von GUI wird verlangt
-			observer.update();
+			observer.update(); 
 		}
 	}
 }
