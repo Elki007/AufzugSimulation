@@ -18,7 +18,7 @@ public class GUI extends Application{
 		
 		//Die neue Simulationsstage wird erzeugt
 		//Sie würde eigentlich die nötigen Parameter aus der Konfig Ansicht übergeben bekommen
-		simStage = new SimulationGUI();
+		simStage = new SimulationGUI(sett);
 		simStage.show();
 	}
 	

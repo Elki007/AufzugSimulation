@@ -14,9 +14,9 @@ public class Simulation implements Runnable {
 	//Link zur GUI über den Observer
 	private Observer observer;
 	
-	public Simulation(int anzahl, Observer o){
+	public Simulation(Settings settings, Observer o){
 		observer = o;
-		aufzuege = new Aufzug[anzahl];
+		aufzuege = new Aufzug[settings.maxAufzug];
 		r = new Random();
 		//Initiales erzeugen der Aufzüge in zufälligem Stockwerk
 		for (int i = 0; i < anzahl; i++)
