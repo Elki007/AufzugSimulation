@@ -1,11 +1,14 @@
 package aufzug;
 
 public class Settings {
-	int maxAufzug;
-	int maxStockwerke;
-	int h;
-	int w;
+	int maxAufzug=0;
+	int maxStockwerke=0;
+	int h=0;
+	int w=0;
 	
+	Settings(){
+		
+	}
 	Settings(int maxAufzug, int maxStockwerke, int w, int h){
 		this.maxAufzug = maxAufzug; 
 		this.maxStockwerke = maxStockwerke;

@@ -5,18 +5,17 @@ import javafx.stage.Stage;
 public class GUI extends Application{
 	private SimulationGUI simStage;
 	private Simulation_Einstellungen simSett;
+	public Settings sett=new Settings();
 
 	@Override
 	public void start(Stage arg0) throws Exception {
 		//Hier würde das erste Fenster zur Konfiguration erscheinen
-		simSett = new Simulation_Einstellungen();
-		
-		Settings sett = new Settings(4,5,1366,768);
-		//simSett.show()
+		simSett = new Simulation_Einstellungen(this, sett);
+		simSett.show();
 		arg0.close();
 		
-		//Die neue Simulationsstage wird erzeugt
-		//Sie würde eigentlich die nötigen Parameter aus der Konfig Ansicht übergeben bekommen
+	}
+	public void simulate() {
 		simStage = new SimulationGUI(sett);
 		simStage.show();
 	}
