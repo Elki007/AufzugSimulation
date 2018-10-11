@@ -19,9 +19,9 @@ public class SimulationGUI extends Stage implements Observer{
 	//private final int AUFZUG_PIXEL_HOEHE = PIXEL_HOEHE / Simulation.ANZAHL_STOCKWERKE;
 	
 	//Attribute für die Darstellung
-	private Rectangle[] rechtecke;
+	private Rectangle[] aufzuge;
 	private Rectangle[] stockwerke;
-	private Vector<Circle> humans;
+	private Vector<Circle> humans = new Vector<Circle>();
 	
 	//Simulations Attribute
 	private Simulation sim;
@@ -34,8 +34,9 @@ public class SimulationGUI extends Stage implements Observer{
 		//Titel setzen
 		this.setTitle("Aufzugssimulation Demo");
 		this.setWidth(settings.w);
-		this.setHeight(settings.h+48);
-		
+		this.setHeight(settings.h+44);
+		//Rechtecke werden auf einer leeren Pane platziert
+		Pane root = new Pane();
 
 		//Simulation erzeugen und starten
 		//Simulation würde noch mehr Konfig Parameter übergeben bekommenz
@@ -46,15 +47,13 @@ public class SimulationGUI extends Stage implements Observer{
 		
 		stockwerkHohe = (settings.h / settings.maxStockwerke);
 		
-		drawElevators();
 		drawStockwerke();
-		
-
-		//Rechtecke werden auf einer leeren Pane platziert
-		Pane root = new Pane();
 		root.getChildren().addAll(stockwerke);
-		root.getChildren().addAll(rechtecke);
 		
+		drawElevators();
+		root.getChildren().addAll(aufzuge);
+		
+		drawHumans(root);
 		
 		//Scene graph wird gesetzt
 		Scene scene = new Scene(root, (settings.getMaxAufzug() + 1)*50, settings.getFensterHoehe());
@@ -62,21 +61,55 @@ public class SimulationGUI extends Stage implements Observer{
 	}
 	public void drawElevators() {
 		//Die Rechtecke für die Aufzüge werden initial gezeichnet
-		rechtecke = new Rectangle[settings.maxAufzug];
+		aufzuge = new Rectangle[settings.maxAufzug];
+		System.out.println("Etagen: "+settings.maxStockwerke+" #Aufzuge:"+settings.maxAufzug);
 		for (int i=0; i<settings.maxAufzug; i++){
 			int pos = sim.getAufzugPosition(i);
-			int iReverted = Math.abs(pos-settings.maxStockwerke +1 );
+			int iReverted = Math.abs(pos-settings.maxStockwerke+1);
 			
-			rechtecke[i] = new Rectangle(50 + i * 60, pos*stockwerkHohe*(settings.maxStockwerke-1), 50, stockwerkHohe);//(25+i*50, (sett.getFensterHoehe() - AUFZUG_PIXEL_HOEHE) - pos*AUFZUG_PIXEL_HOEHE, 50, AUFZUG_PIXEL_HOEHE);
-			rechtecke[i].setFill(Color.AQUA); 
+			System.out.println("pos="+pos+"  Rev="+iReverted+" ");
+			aufzuge[i] = new Rectangle(50 + i * 60, iReverted*stockwerkHohe, 50, stockwerkHohe);
+			aufzuge[i].setFill(Color.AQUA); 
 		}
 	}
+	
 	public void drawStockwerke() {
 		stockwerke = new Rectangle[settings.maxStockwerke];
 		for (int i=0; i<settings.maxStockwerke;i++) { 
 			stockwerke[i] = new Rectangle(0, i*stockwerkHohe, settings.w,stockwerkHohe); 
 			stockwerke[i].setFill(Color.rgb((int)(255-Math.random()*100),(int)(255-Math.random()*100),(int)(255-Math.random()*100)));
 			//root.getChildren().add(stockwerke.get(i)); 
+		}
+	}
+	
+	public void drawHumans(Pane root) {
+		int overall =0;
+		int iiReverted;
+		for (int i=0; i<settings.maxStockwerke;i++) {
+			Vector<Person> current = sim.getAnzleuteAnDerEtage(i);
+			int number =0;
+			for (int p=0; p <current.size() ;p++) {
+				int centerX;
+				int centerY;
+				double radius;
+				if (current.get(p).getGewicht()<100) {
+					radius = 5;
+				}else if(current.get(p).getGewicht()<200) {
+					radius = 10;
+				}else {
+					radius = 15;
+				}
+				//System.out.println("X:"+ 100+radius*number+" Y"+stockwerkHohe*(i+0.5));
+				//revert i to show Etage in a right order
+				 
+				iiReverted = Math.abs(i-settings.maxStockwerke +1 );
+				
+				humans.add(new Circle(settings.w -100 - 30*number, stockwerkHohe*(iiReverted+0.5),radius));
+				humans.get(overall).setFill(Color.BLACK);
+				root.getChildren().add(humans.get(overall));
+				overall++;
+				number ++;
+			}
 		}
 	}
 	
@@ -101,7 +134,7 @@ public class SimulationGUI extends Stage implements Observer{
 		System.out.println("Aufzug " + aufzugNummer + " von " + (sim.getAufzugPosition(aufzugNummer)+stockwerkAenderung) + " in " + sim.getAufzugPosition(aufzugNummer));
 		
 		//Animation der Aufzüge
-		TranslateTransition anpassung = new TranslateTransition(Duration.seconds(Aufzug.DAUER_PRO_STOCK), rechtecke[aufzugNummer]);
+		TranslateTransition anpassung = new TranslateTransition(Duration.seconds(Aufzug.DAUER_PRO_STOCK), aufzuge[aufzugNummer]);
 		anpassung.setByY(stockwerkAenderung*stockwerkHohe);
 		anpassung.play();
 	}

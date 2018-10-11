@@ -11,7 +11,7 @@ public class GUI extends Application{
 		//Hier würde das erste Fenster zur Konfiguration erscheinen
 		simSett = new Simulation_Einstellungen();
 		
-		Settings sett = new Settings(4,4,1366,768);
+		Settings sett = new Settings(4,5,1366,768);
 		//simSett.show()
 		arg0.close();
 		

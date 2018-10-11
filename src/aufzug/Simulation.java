@@ -67,6 +67,10 @@ public class Simulation implements Runnable {
 	public int getAufzugPositionAenderung(int nummer){
 		return aufzuege[nummer].getPositionVeraenderung();
 	}
+	
+	public Vector<Person> getAnzleuteAnDerEtage(int i) {
+		return stockwerke.get(i).leute;
+	}
 
 	@Override
 	public void run() {
