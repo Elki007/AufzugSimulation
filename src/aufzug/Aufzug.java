@@ -17,6 +17,8 @@ public class Aufzug {
 	private int stockwerkAenderung;
 	private boolean inBewegung;
 	private long startBewegung;
+	private boolean wartend;
+	private long startWartezeit;
 	private Vector<Person> leuteImFahrstuhl = new Vector<Person>();
 	
 	//Initialisierung im Konstruktor
@@ -33,7 +35,7 @@ public class Aufzug {
 		this.groesseMax = 10;
 		this.groesseAktuell = 0;
 		this.inBewegung = false;
-		this.startBewegung = 0;
+		this.wartend = true;
 	}
 	
 	//Weitere getter und setter - Ordnung kommt später (wahrscheinlich nicht :( )
@@ -60,6 +62,22 @@ public class Aufzug {
 	
 	public void setBewegungStart() {
 		startBewegung = System.currentTimeMillis();
+	}
+	
+	public void setWartet(boolean wartet) {
+		this.wartend = wartet;
+	}
+	
+	public boolean getWartend() {
+		return this.wartend;
+	}
+	
+	public void setWartezeitStart() {
+		startWartezeit = System.currentTimeMillis();
+	}
+	
+	public long getDauerWartezeit() {
+		return (System.currentTimeMillis() - startWartezeit) / 1000;
 	}
 	
 	public boolean getInBewegung() {

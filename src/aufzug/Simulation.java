@@ -171,49 +171,34 @@ public class Simulation implements Runnable {
 			}
 		}	
 	}
-	
-	private void einUndAussteigen() {
-		for (Aufzug aufzug : aufzuege) {
-			// Wenn Aufzug nicht in Bewegung
-			if (aufzug.getInBewegung() == false) {
-				// Gehe Leute im Stockwerk vom Aufzug durch (von hinten beginnend)
-				int zaehltEinsteiger = 0;
-				for (int i = (stockwerke.get(aufzug.getPosition()).leute.size()-1); i >= 0; i--) {
-					// Wenn Person nicht am Ziel
-					if (stockwerke.get(aufzug.getPosition()).leute.get(i).amZiel == false) {
-						// Person steigt ein, wenn es nicht Zielstockwerk ist
-						aufzug.setPersonSteigtEin(stockwerke.get(aufzug.getPosition()).leute.get(i));
-						// Person verlässt somit Stockwerk
-						stockwerke.get(aufzug.getPosition()).leute.remove(i);
-						zaehltEinsteiger++;
-					}
-				}
-				
-				// Ist eine Personen im Aufzug am Ziel? (von hinten beginnend)
-				int zaehltAussteiger = 0;
-				for (int i = (aufzug.getAnzahlLeuteInFahrstuhl() - 1); i >= 0; i--) {
-					// Wenn eine Person ihr Zielstockwerk erreicht 
-					if (aufzug.getPersonAnPosition(i).zielStockwerk == aufzug.getPosition()) {
-						// Person ist am Ziel
-						aufzug.getPersonAnPosition(i).amZiel = true;
-						// Steigt in Stockwerk ein & aus Auszug aus
-						stockwerke.get(aufzug.getPosition()).leute.add(aufzug.getPersonAnPosition(i));
-						aufzug.setPersonAnPositionSteigtAus(i);
-						
-						// Meldung, dass Person in Stockwerk x ausgestiegen ist
-						zaehltAussteiger++;
-					}
-				}
-				// Debug-Ausgabe, wenn jemand ein-/aussteigt
-				if (zaehltEinsteiger > 0) 
-					System.out.println("Personen die in Stockwerk " + aufzug.getPosition() + " in A" + aufzug.getId() + " eingestiegen sind: " + zaehltEinsteiger);
-				if (zaehltAussteiger > 0) 
-					System.out.println("Personen die in Stockwerk " + aufzug.getPosition() + " aus A" + aufzug.getId() + " ausgestiegen sind: " + zaehltAussteiger);
-				if (zaehltEinsteiger > 0 || zaehltAussteiger > 0) System.out.println();
-			}
-		}	
-	}
 
+	/*
+	 *  Aufzüge bleiben für die Zeit der Stockwerkdauer * Stockwerkveraenderung im Zustand Bewegung
+	 *  Daraufhin beginnt die Wartezeit 
+	 */
+	private void aufzuegeInBewegung() {
+		for (Aufzug aufzug : aufzuege) {
+			if (aufzug.getInBewegung() == true) {
+				if (aufzug.getDauerBewegung() > (2 + (Math.abs(aufzug.getStockwerkVeraenderung()) * aufzug.getDAUER_PRO_STOCK()))) {
+					aufzug.setInBewegung(false);
+					aufzug.setWartezeitStart();
+					aufzug.setWartet(true);
+				}
+			}
+		}
+	}
+	
+	// Wartezeit beginnt und endet nach 10 Sekunden
+	private void aufzuegeWarten() {
+		for (Aufzug aufzug : aufzuege) {
+			if (aufzug.getWartend() == true) {
+				if (aufzug.getDauerWartezeit() > 10) {
+					aufzug.setWartet(false);
+				}
+			}
+		}
+	}
+	
 	@Override
 	public void run() {
 		//Dauerschleife zur Simulation
@@ -236,13 +221,12 @@ public class Simulation implements Runnable {
 			 * - dazu werden 2 Wartesekunden addiert
 			 * - inwiefern ist frame bzw. Aktualisierungsrate zu beachten? Eigentlich nicht weiter - gibt zwar den nächsten Anstoß und könnte kleiner sein, aber nicht wichtig
 			 */
-			for (Aufzug aufzug : aufzuege) {
-				if (aufzug.getInBewegung() == true) {
-					if (aufzug.getDauerBewegung() > (2 + (Math.abs(aufzug.getStockwerkVeraenderung()) * aufzug.getDAUER_PRO_STOCK()))) {
-						aufzug.setInBewegung(false);
-					}
-				}
-			}
+			
+			
+			aufzuegeInBewegung();
+			
+			aufzuegeWarten();
+			
 			
 			
 			/*
@@ -265,7 +249,7 @@ public class Simulation implements Runnable {
 			while (gegenEndlosSchleife < 100) {
 				// Zufälliger Aufzug der nicht in Bewegung ist - maximal 100 Versuche
 				aufzugZufaellig = r.nextInt(settings.getMaxAufzug());
-				if (aufzuege[aufzugZufaellig].getInBewegung() == false) {
+				if (aufzuege[aufzugZufaellig].getInBewegung() == false && aufzuege[aufzugZufaellig].getWartend() == false) {
 					// Zufälliger Stockwerk
 					stockwerkZufaellig = r.nextInt(settings.maxStockwerke);
 					while (stockwerkZufaellig == aufzuege[aufzugZufaellig].getPosition()) {
