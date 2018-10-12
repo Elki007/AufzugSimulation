@@ -238,7 +238,7 @@ public class Simulation implements Runnable {
 			 */
 			for (Aufzug aufzug : aufzuege) {
 				if (aufzug.getInBewegung() == true) {
-					if (aufzug.getDauerBewegung() > (10 + (Math.abs(aufzug.getStockwerkVeraenderung()) * aufzug.getDAUER_PRO_STOCK()))) {
+					if (aufzug.getDauerBewegung() > (2 + (Math.abs(aufzug.getStockwerkVeraenderung()) * aufzug.getDAUER_PRO_STOCK()))) {
 						aufzug.setInBewegung(false);
 					}
 				}
