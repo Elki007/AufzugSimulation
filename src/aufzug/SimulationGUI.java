@@ -120,6 +120,27 @@ public class SimulationGUI extends Stage implements Observer{
 		}
 	}
 	
+	public void human2elevator() {
+		//System.out.println(humans.size());
+		int overall =0;
+		int iiReverted;
+		for (int i=0; i<settings.maxStockwerke;i++) {
+			Vector<Person> current = sim.getAnzleuteAnDerEtage(i);
+			int number =0;
+			for (int p=0; p <current.size() ;p++) {
+				//System.out.println("Geduld: " +current.get(p).geduld);
+				if (current.get(p).steigEin == true) {//frame
+					current.get(p).eingestiegen = true;
+					//System.out.println("Person No: " +overall+"goes home" );
+					TranslateTransition anpassung = new TranslateTransition(Duration.seconds(6), humans.get(overall));//frame
+					anpassung.setByX(-200);
+					anpassung.play();
+				}
+				overall++;
+			}
+		}
+	}
+	
 	public void drawHumans(Pane root) {
 		int overall =0;
 		int iiReverted;
@@ -183,6 +204,7 @@ public class SimulationGUI extends Stage implements Observer{
 				root.getChildren().addAll(stockwerke);
 				drawHumans(root);
 				humanGoHome();
+				human2elevator();
 				// TODO Auto-generated method stub	
 			}
 		});

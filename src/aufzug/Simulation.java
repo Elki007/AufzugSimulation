@@ -118,6 +118,33 @@ public class Simulation implements Runnable {
 		}
 	}
 	
+	private void leuteSteigenEin_2() {
+		for (Aufzug aufzug : aufzuege) {
+			// Wenn Aufzug nicht in Bewegung
+			if (aufzug.getInBewegung() == false) {
+				// Gehe Leute im Stockwerk vom Aufzug durch (von hinten beginnend)
+				int zaehltEinsteiger = 0;
+				for (int i = (stockwerke.get(aufzug.getPosition()).leute.size()-1); i >= 0; i--) {
+					// Wenn Person nicht am Ziel
+					if (stockwerke.get(aufzug.getPosition()).leute.get(i).amZiel == false) {
+						// Person steigt ein, wenn es nicht Zielstockwerk ist
+						aufzug.setPersonSteigtEin(stockwerke.get(aufzug.getPosition()).leute.get(i));
+						// Person verlässt somit Stockwerk
+						//stockwerke.get(aufzug.getPosition()).leute.remove(i);
+						if (stockwerke.get(aufzug.getPosition()).leute.get(i).eingestiegen == false) {
+							stockwerke.get(aufzug.getPosition()).leute.get(i).steigEin = true;
+						}
+						zaehltEinsteiger++;
+					}
+				}
+				// Debug-Ausgabe, wenn jemand einsteigt
+				if (zaehltEinsteiger > 0) 
+					System.out.println("Personen die in Stockwerk " + aufzug.getPosition() + " in A" + aufzug.getId() + " eingestiegen sind: " + zaehltEinsteiger);
+				
+			}
+		}
+	}
+	
 	// Geht Aufzüge durch und schaut, ob im Stockwerk vom Aufzug Leute ihr Ziel erreicht haben
 	private void leuteSteigenAus() {
 		for (Aufzug aufzug : aufzuege) {
@@ -211,7 +238,7 @@ public class Simulation implements Runnable {
 			 */
 			for (Aufzug aufzug : aufzuege) {
 				if (aufzug.getInBewegung() == true) {
-					if (aufzug.getDauerBewegung() > (2 + (Math.abs(aufzug.getStockwerkVeraenderung()) * aufzug.getDAUER_PRO_STOCK()))) {
+					if (aufzug.getDauerBewegung() > (10 + (Math.abs(aufzug.getStockwerkVeraenderung()) * aufzug.getDAUER_PRO_STOCK()))) {
 						aufzug.setInBewegung(false);
 					}
 				}
@@ -222,7 +249,7 @@ public class Simulation implements Runnable {
 			 *  Ein- und Aussteigen von Leuten in Aufzüge
 			 */
 			//einUndAussteigen();
-			leuteSteigenEin();
+			leuteSteigenEin_2();
 			leuteSteigenAus();			
 			
 			/*

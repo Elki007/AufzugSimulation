@@ -4,7 +4,7 @@ package aufzug;
 public class Person {
 	int gewicht, geduld, startStockwerk, zielStockwerk, currentStockwerk, einausStiegZ;
 	//geduld in secondsss
-	boolean gepaeck, richtungHoch, goHome=false, amZiel;
+	boolean gepaeck, richtungHoch, goHome=false, amZiel, steigEin = false, eingestiegen = false;
 	long warteZeit,fahrZeit;
 	int maxGew = 300, minGew = 10;
 	
