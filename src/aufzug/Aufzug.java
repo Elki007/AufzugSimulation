@@ -12,6 +12,9 @@ public class Aufzug {
 	private int gewichtAktuell;
 	private int groesseMax;
 	private int groesseAktuell;
+	private int stockwerkAenderung;
+	private boolean inBewegung;
+	private long dauerBewegung;
 	private Vector<Person> leuteImFahrstuhl = new Vector<Person>();
 	
 	//Initialisierung im Konstruktor
@@ -23,9 +26,44 @@ public class Aufzug {
 		this.gewichtAktuell = 0;
 		this.groesseMax = 10;
 		this.groesseAktuell = 0;
+		this.inBewegung = false;
+		this.dauerBewegung = 0;
 	}
 	
-	//Berechnet die Stockwerksveränderung und gibt sie zurück
+	//Weitere getter und setter - Ordnung kommt später (wahrscheinlich nicht :( )
+	public void setStockwerkVeraenderung() {
+		// Warum invertiert? -> von 0 zu 2 = -2?
+		stockwerkAenderung = altePosition-position;
+	}
+	
+	public int getStockwerkAktuell() {
+		return position;
+	}
+	
+	public int getStockwerkAlt() {
+		return altePosition;
+	}
+	
+	public int getStockwerkVeraenderung() {
+		return stockwerkAenderung;
+	}
+	
+	public long getDauerBewegung() {
+		return (System.currentTimeMillis() - dauerBewegung);
+	}
+	
+	public void setBewegungStart() {
+		dauerBewegung = System.currentTimeMillis();
+	}
+	
+	public boolean getInBewegung() {
+		return inBewegung;
+	}
+	
+	public void setInBewegung(boolean bewegung) {
+		inBewegung = bewegung;
+	}
+		
 	public int getPositionVeraenderung() {
 		int veraenderung = altePosition-position;
 		altePosition = position;

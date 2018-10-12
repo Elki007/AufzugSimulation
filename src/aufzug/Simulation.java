@@ -105,43 +105,102 @@ public class Simulation implements Runnable {
 			}
 			summonPerson();
 			updateLoyalty();
-			//Zufälliger Aufzug wird ausgewählt
-			int welcher = r.nextInt(settings.maxAufzug);//SimulationGUI.ANZAHL_AUFZUEGE);
-			//Zufälliges Stockwerk wird gesetzt
-			aufzuege[welcher].setPosition(r.nextInt(settings.maxStockwerke));
 			
-			// Jeden Aufzug durchgehen
+			
+			
+			/*
+			 *  Ein- und Aussteigen von Leuten in Aufzüge
+			 */
 			for (Aufzug aufzug : aufzuege) {
-				// Gehe Leute im Stockwerk vom Aufzug durch (von hinten beginnend)
-				for (int i = (stockwerke.get(aufzug.getPosition()).leute.size()-1); i >= 0; i--) {
-					// Wenn Person nicht am Ziel
-					if (stockwerke.get(aufzug.getPosition()).leute.get(i).amZiel == false) {
-						// Person steigt ein, wenn es nicht Zielstockwerk ist
-						aufzug.setPersonSteigtEin(stockwerke.get(aufzug.getPosition()).leute.get(i));
-						// Person verlässt somit Stockwerk
-						stockwerke.get(aufzug.getPosition()).leute.remove(i);
+				// Wenn Aufzug nicht in Bewegung
+				if (aufzug.getInBewegung() == false) {
+					// Gehe Leute im Stockwerk vom Aufzug durch (von hinten beginnend)
+					for (int i = (stockwerke.get(aufzug.getPosition()).leute.size()-1); i >= 0; i--) {
+						// Wenn Person nicht am Ziel
+						if (stockwerke.get(aufzug.getPosition()).leute.get(i).amZiel == false) {
+							// Person steigt ein, wenn es nicht Zielstockwerk ist
+							aufzug.setPersonSteigtEin(stockwerke.get(aufzug.getPosition()).leute.get(i));
+							// Person verlässt somit Stockwerk
+							stockwerke.get(aufzug.getPosition()).leute.remove(i);
+						}
 					}
-				}
-				/*
-				// Ist eine Personen im Aufzug am Ziel? (von hinten beginnend)
-				for (int i = (aufzug.getAnzahlLeuteInFahrstuhl() - 1); i >= 0; i--) {
-					// Wenn eine Person ihr Zielstockwerk erreicht 
-					if (aufzug.getPersonAnPosition(i).zielStockwerk == aufzug.getPosition()) {
-						stockwerke.get(aufzug.getPosition()).leute.add(aufzug.getPersonAnPosition(i));
-						aufzug.setPersonAnPositionSteigtAus(i);
-						aufzug.getPersonAnPosition(i).amZiel = true;
+					
+					// Ist eine Personen im Aufzug am Ziel? (von hinten beginnend)
+					int zaehltAussteiger = 0;
+					for (int i = (aufzug.getAnzahlLeuteInFahrstuhl() - 1); i >= 0; i--) {
+						// Wenn eine Person ihr Zielstockwerk erreicht 
+						if (aufzug.getPersonAnPosition(i).zielStockwerk == aufzug.getPosition()) {
+							// Person ist am Ziel
+							aufzug.getPersonAnPosition(i).amZiel = true;
+							// Steigt in Stockwerk ein & aus Auszug aus
+							stockwerke.get(aufzug.getPosition()).leute.add(aufzug.getPersonAnPosition(i));
+							aufzug.setPersonAnPositionSteigtAus(i);
+							
+							// Meldung, dass Person in Stockwerk x ausgestiegen ist
+							zaehltAussteiger++;
+						}
 					}
+					// Debug-Ausgabe, wenn jemand aussteigt
+					if (zaehltAussteiger > 0) 
+						System.out.println("Personen die in Stockwerk " + aufzug.getPosition() + " ausgestiegen sind: " + zaehltAussteiger);
 				}
-				*/
-			}			
+			}				
 			
-			// Ausgabe: Aufzüge -> Stockwerk
+			
+			/*
+			 *  Bewegungsänderungen für wartende Aufzüge
+			 */
+			// Zufälliger Aufzug wird ausgewählt (mit inBewegung -> false)
+			int aufzugZufaellig = r.nextInt(settings.getMaxAufzug());
+			while (aufzuege[aufzugZufaellig].getInBewegung() == true) {
+				aufzugZufaellig = r.nextInt(settings.getMaxAufzug());
+			}
+			// Zufälliges Stockwerk wird für Aufzug gewählt
+			int stockwerkZufaellig = r.nextInt(settings.maxStockwerke);
+			while (stockwerkZufaellig == aufzuege[aufzugZufaellig].getPosition()) {
+				stockwerkZufaellig = r.nextInt(settings.maxStockwerke);
+			}
+
+			//Zufälliges Stockwerk wird gesetzt
+			aufzuege[aufzugZufaellig].setPosition(stockwerkZufaellig);
+			
+			// Problem: Aufzüge müssten nach Stockwerkzeit * Positionsveränderung wieder inBewegung->false gesetzt werden
+			// Aktuell: Jeder Aufzug fährt nur einmal
+			//aufzuege[aufzugZufaellig].setInBewegung(true);
+			
+			
+			/*
+			 * Experiment mit Zeit
+			 * Idee: 
+			 * - Aufzug bekommt eine Startzeit bei Bewegung und wenn Startzeit
+			 * - Wenn Startzeit + Stockwerkzeit*Stockwerkänderung > Jetzt -> False
+			 * 
+			 * Aufzug 0 wird beobachtet.
+			 */
+			
+			/*
+			// Alte Implementation von vor der Löschung
+			if (aufzugZufaellig == 0) {
+				//int alter = (int)((System.currentTimeMillis() - aufzuege[aufzugZufaellig].getDauerBewegung())/1000);
+				//System.out.println("\n\nSo alt ist Aufzug 0 in Sekunden: " + alter + "\n\n");
+				System.out.println("Altes Stockwerk: " + aufzuege[aufzugZufaellig].getStockwerkAlt());
+				System.out.println("Aktuelles Stockwerk: " + aufzuege[aufzugZufaellig].getStockwerkAktuell());
+				aufzuege[aufzugZufaellig].setStockwerkVeraenderung();
+				System.out.println("Stockwerkveränderung: " + aufzuege[aufzugZufaellig].getStockwerkVeraenderung());
+			}	
+			*/
+			
+			
+			/*
+			 * Debug-Ausgaben
+			 */
+			// Debug-Ausgabe: "Aufzugnummer" in "Stockwerknummer" mit "Personenanzahl" - bspw. "A0 in S0 mit P-5"
 			for (Aufzug each : aufzuege) {
 				System.out.print("A" + each.getId() + " in S" + each.getPosition() + " mit P-" + each.getAnzahlLeuteInFahrstuhl() + "\n");
 			}
 			System.out.println();
 			
-			// Ausgabe: Stockwerk -> Personen 
+			// Debug-Ausgabe: "Stockwerknummer" mit "Personenanzahl" - bspw. "S0 mit 3" 
 			for (int i = 0; i < settings.getMaxStockwerk(); i++) {
 				System.out.print("S" + i + " mit " + stockwerke.get(i).leute.size() + "\n");
 			}
