@@ -148,6 +148,10 @@ public class SimulationGUI extends Stage implements Observer{
 				}else {
 					humans.get(overall).setFill(Color.BLACK);
 				}
+				if (current.get(number).amZiel == true) {
+					humans.get(overall).setFill(Color.GREEN);
+				}
+				
 				root.getChildren().add(humans.get(overall));
 				overall++;
 				number ++;
