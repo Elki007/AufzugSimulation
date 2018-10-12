@@ -4,7 +4,8 @@ package aufzug;
 public class Person {
 	int gewicht, geduld, startStockwerk, zielStockwerk, currentStockwerk, einausStiegZ;
 	//geduld in secondsss
-	boolean gepaeck, richtungHoch, goHome=false, amZiel, steigEin = false, eingestiegen = false;
+	boolean gepaeck, richtungHoch, goHome=false, amZiel, steigEin = false, eingestiegen = false, home = false, wait=true;
+	Status status;
 	long warteZeit,fahrZeit;
 	int maxGew = 300, minGew = 10;
 	
@@ -14,6 +15,7 @@ public class Person {
 		geduld = (int)(5 + 100 * Math.random());//180*
 		einausStiegZ = (int)(3 + 10 * Math.random());
 		startStockwerk = start;
+		status = Status.wait;
 		zielStockwerk = (int)(1 + (Math.random() * ((maxStockwerk-1) + 1)));
 		
 		amZiel = false;

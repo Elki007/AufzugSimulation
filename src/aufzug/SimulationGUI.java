@@ -109,7 +109,9 @@ public class SimulationGUI extends Stage implements Observer{
 			int number =0;
 			for (int p=0; p <current.size() ;p++) {
 				//System.out.println("Geduld: " +current.get(p).geduld);
-				if (current.get(p).geduld<=4) {//frame
+				
+				if (current.get(p).status == Status.goHome) {//frame
+					current.get(p).status = Status.home;
 					//System.out.println("Person No: " +overall+"goes home" );
 					TranslateTransition anpassung = new TranslateTransition(Duration.seconds(6), humans.get(overall));//frame
 					anpassung.setByX(200);
@@ -129,8 +131,9 @@ public class SimulationGUI extends Stage implements Observer{
 			int number =0;
 			for (int p=0; p <current.size() ;p++) {
 				//System.out.println("Geduld: " +current.get(p).geduld);
-				if (current.get(p).steigEin == true) {//frame
-					current.get(p).eingestiegen = true;
+				if (current.get(p).status == Status.steigEin) {//frame
+					current.get(p).status = Status.eingestiegen;
+					//current.get(p).steigEin = false;
 					//System.out.println("Person No: " +overall+"goes home" );
 					TranslateTransition anpassung = new TranslateTransition(Duration.seconds(6), humans.get(overall));//frame
 					anpassung.setByX(-200);
@@ -148,6 +151,7 @@ public class SimulationGUI extends Stage implements Observer{
 			Vector<Person> current = sim.getAnzleuteAnDerEtage(i);
 			int number =0;
 			for (int p=0; p <current.size() ;p++) {
+				
 				int centerX;
 				int centerY;
 				double radius;
@@ -169,10 +173,13 @@ public class SimulationGUI extends Stage implements Observer{
 				}else {
 					humans.get(overall).setFill(Color.BLACK);
 				}
+				if (current.get(number).status == Status.eingestiegen) {
+					humans.get(overall).setFill(Color.WHITE);
+				}
 				if (current.get(number).amZiel == true) {
 					humans.get(overall).setFill(Color.GREEN);
 				}
-				
+				//if (current.get(number).home == false || current.get(number).eingestiegen == true )
 				root.getChildren().add(humans.get(overall));
 				overall++;
 				number ++;
