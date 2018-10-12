@@ -107,10 +107,11 @@ public class Simulation implements Runnable {
 			updateLoyalty();
 			
 			/*
-			 * Überprüfung, ob ein Aufzug schon im Zielstockwerk angekommen ist -> inBewegung -> false
+			 * Aufzüge werden wieder in Bereitschaft gesetzt, wenn sie in einem Stockwerk angekommen sind
+			 * 
 			 * Gedanke:
 			 * - ab .setBewegungStart() wird gezählt
-			 * - Aufzug überquert x Stockwerke in bestimmter Zeit -> abs(Stockwerkänderung) * Stockwerkzeit
+			 * - Aufzug überquert eine Anzahl von Stockwerken in einer bestimmten Zeit -> abs(Stockwerkänderung) * Stockwerkzeit
 			 * - dazu werden 2 Wartesekunden addiert
 			 * - inwiefern ist frame bzw. Aktualisierungsrate zu beachten? Eigentlich nicht weiter - gibt zwar den nächsten Anstoß und könnte kleiner sein, aber nicht wichtig
 			 */
@@ -130,6 +131,7 @@ public class Simulation implements Runnable {
 				// Wenn Aufzug nicht in Bewegung
 				if (aufzug.getInBewegung() == false) {
 					// Gehe Leute im Stockwerk vom Aufzug durch (von hinten beginnend)
+					int zaehltEinsteiger = 0;
 					for (int i = (stockwerke.get(aufzug.getPosition()).leute.size()-1); i >= 0; i--) {
 						// Wenn Person nicht am Ziel
 						if (stockwerke.get(aufzug.getPosition()).leute.get(i).amZiel == false) {
@@ -137,6 +139,7 @@ public class Simulation implements Runnable {
 							aufzug.setPersonSteigtEin(stockwerke.get(aufzug.getPosition()).leute.get(i));
 							// Person verlässt somit Stockwerk
 							stockwerke.get(aufzug.getPosition()).leute.remove(i);
+							zaehltEinsteiger++;
 						}
 					}
 					
@@ -155,9 +158,12 @@ public class Simulation implements Runnable {
 							zaehltAussteiger++;
 						}
 					}
-					// Debug-Ausgabe, wenn jemand aussteigt
+					// Debug-Ausgabe, wenn jemand ein-/aussteigt
+					if (zaehltEinsteiger > 0) 
+						System.out.println("Personen die in Stockwerk " + aufzug.getPosition() + " in A" + aufzug.getId() + " eingestiegen sind: " + zaehltEinsteiger);
 					if (zaehltAussteiger > 0) 
-						System.out.println("Personen die in Stockwerk " + aufzug.getPosition() + " ausgestiegen sind: " + zaehltAussteiger);
+						System.out.println("Personen die in Stockwerk " + aufzug.getPosition() + " aus A" + aufzug.getId() + " ausgestiegen sind: " + zaehltAussteiger);
+					if (zaehltEinsteiger > 0 || zaehltAussteiger > 0) System.out.println();
 				}
 			}				
 			
@@ -195,11 +201,17 @@ public class Simulation implements Runnable {
 					aufzuege[aufzugZufaellig].setInBewegung(true);
 					aufzuege[aufzugZufaellig].setBewegungStart();
 					
+					aufzuege[aufzugZufaellig].setStockwerkVeraenderung();
+					
+					// Debug-Ausgabe "A0 fährt jetzt: 1 -> 3"
+					System.out.println("A" + aufzuege[aufzugZufaellig].getId() + " fährt jetzt: " + aufzuege[aufzugZufaellig].getStockwerkAlt() + " -> " + aufzuege[aufzugZufaellig].getStockwerkAktuell());
+					
+					/*
 					System.out.println("A" + aufzuege[aufzugZufaellig].getId() + " Aktuell: " + aufzuege[aufzugZufaellig].getStockwerkAktuell());
 					System.out.println("A" + aufzuege[aufzugZufaellig].getId() + " Alt: " + aufzuege[aufzugZufaellig].getStockwerkAlt());
-					aufzuege[aufzugZufaellig].setStockwerkVeraenderung();
 					System.out.println("A" + aufzuege[aufzugZufaellig].getId() + " Unterschied: " + aufzuege[aufzugZufaellig].getStockwerkVeraenderung());
 					System.out.println();
+					*/
 					
 					// Ohne "break;" wird für alle Aufzüge ein neues Ziel ermittelt (100 Versuche aus der Aufzugwahl)
 					//break;
@@ -233,9 +245,10 @@ public class Simulation implements Runnable {
 			/*
 			 * Debug-Ausgaben
 			 */
+			
 			// Debug-Ausgabe: "Aufzugnummer" in "Stockwerknummer" mit "Personenanzahl" - bspw. "A0 in S0 mit P-5"
 			for (Aufzug each : aufzuege) {
-				System.out.print("A" + each.getId() + " in S" + each.getPosition() + " mit P-" + each.getAnzahlLeuteInFahrstuhl() + "\n");
+				System.out.print("A" + each.getId() + " ist dann in S" + each.getPosition() + " mit P-" + each.getAnzahlLeuteInFahrstuhl() + "\n");
 			}
 			System.out.println();
 			

@@ -212,7 +212,7 @@ public class SimulationGUI extends Stage implements Observer{
 	
 	private void fahre(int aufzugNummer, int stockwerkAenderung){
 		//Ausgabe auf der Konsole was passieren soll
-		System.out.println("A" + aufzugNummer + " mit " + (sim.getAufzugPosition(aufzugNummer)+stockwerkAenderung) + " -> " + sim.getAufzugPosition(aufzugNummer));
+		//System.out.println("A" + aufzugNummer + " mit " + (sim.getAufzugPosition(aufzugNummer)+stockwerkAenderung) + " -> " + sim.getAufzugPosition(aufzugNummer));
 		System.out.println();
 		//Animation der Aufzüge
 		TranslateTransition anpassung = new TranslateTransition(Duration.seconds(Aufzug.DAUER_PRO_STOCK*Math.abs(stockwerkAenderung)), aufzuge[aufzugNummer]);
