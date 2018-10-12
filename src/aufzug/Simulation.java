@@ -106,6 +106,15 @@ public class Simulation implements Runnable {
 			summonPerson();
 			updateLoyalty();
 			
+			/*
+			 * Überprüfung, ob ein Aufzug schon im Zielstockwerk angekommen ist -> inBewegung -> false
+			 */
+			for (Aufzug aufzug : aufzuege) {
+				if (aufzug.getInBewegung() == true) {
+					// Dauer der Bewegung mit Stockwerkänderung * Stockwerkzeit abgleichen
+					// Ist Zeit überschritten -> inBewegung -> false
+				}
+			}
 			
 			
 			/*
@@ -147,27 +156,44 @@ public class Simulation implements Runnable {
 			}				
 			
 			
+			
 			/*
 			 *  Bewegungsänderungen für wartende Aufzüge
 			 */
-			// Zufälliger Aufzug wird ausgewählt (mit inBewegung -> false)
-			int aufzugZufaellig = r.nextInt(settings.getMaxAufzug());
-			while (aufzuege[aufzugZufaellig].getInBewegung() == true) {
+			// Zufälliger Aufzug wird ausgewählt (mit inBewegung -> false) - 100 Versuche
+			int aufzugZufaellig;
+			int stockwerkZufaellig;
+			int gegenEndlosSchleife = 0;
+			
+			// Es wird ein Aufzug gesucht, der nicht in Bewegung ist
+			// Für diesen Aufzug wird ein zufälliges Ziel gesucht und das Stockwerk als neue Position gesetzt
+			while (gegenEndlosSchleife < 100) {
+				// Zufälliger Aufzug der nicht in Bewegung ist - maximal 100 Versuche
 				aufzugZufaellig = r.nextInt(settings.getMaxAufzug());
+				if (aufzuege[aufzugZufaellig].getInBewegung() == false) {
+					// Zufälliger Stockwerk
+					stockwerkZufaellig = r.nextInt(settings.maxStockwerke);
+					while (stockwerkZufaellig == aufzuege[aufzugZufaellig].getPosition()) {
+						stockwerkZufaellig = r.nextInt(settings.maxStockwerke);
+					}
+					
+					// Zufälliges Stockwerk wird gesetzt
+					aufzuege[aufzugZufaellig].setPosition(stockwerkZufaellig);
+					
+					// Problem: Aufzüge müssten nach Stockwerkzeit * Positionsveränderung wieder inBewegung->false gesetzt werden
+					// Aktuell: Jeder Aufzug fährt nur einmal
+					aufzuege[aufzugZufaellig].setInBewegung(true);
+					aufzuege[aufzugZufaellig].setBewegungStart();
+					
+					
+					
+					
+					// Ohne break; wird für alle Aufzüge ein neues Ziel ermittelt (100 Versuche aus der Aufzugwahl)
+					break;
+				}
+				gegenEndlosSchleife++;
 			}
-			// Zufälliges Stockwerk wird für Aufzug gewählt
-			int stockwerkZufaellig = r.nextInt(settings.maxStockwerke);
-			while (stockwerkZufaellig == aufzuege[aufzugZufaellig].getPosition()) {
-				stockwerkZufaellig = r.nextInt(settings.maxStockwerke);
-			}
-
-			//Zufälliges Stockwerk wird gesetzt
-			aufzuege[aufzugZufaellig].setPosition(stockwerkZufaellig);
-			
-			// Problem: Aufzüge müssten nach Stockwerkzeit * Positionsveränderung wieder inBewegung->false gesetzt werden
-			// Aktuell: Jeder Aufzug fährt nur einmal
-			//aufzuege[aufzugZufaellig].setInBewegung(true);
-			
+					
 			
 			/*
 			 * Experiment mit Zeit
@@ -179,7 +205,7 @@ public class Simulation implements Runnable {
 			 */
 			
 			/*
-			// Alte Implementation von vor der Löschung
+			// Alte Implementation von vor der Löschung - kann aktuell nicht genutzt werden (fehlende Methoden)
 			if (aufzugZufaellig == 0) {
 				//int alter = (int)((System.currentTimeMillis() - aufzuege[aufzugZufaellig].getDauerBewegung())/1000);
 				//System.out.println("\n\nSo alt ist Aufzug 0 in Sekunden: " + alter + "\n\n");

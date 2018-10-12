@@ -8,40 +8,46 @@ public class Aufzug {
 	private int aufzugId;
 	private int altePosition;
 	private int position;
+	private int stockwerkAlt; // ersetzt später altePosition
+	private int stockwerkAktuell; // ersetzt später Position
 	private int gewichtMax;
 	private int gewichtAktuell;
 	private int groesseMax;
 	private int groesseAktuell;
 	private int stockwerkAenderung;
 	private boolean inBewegung;
-	private long dauerBewegung;
+	private long startBewegung;
 	private Vector<Person> leuteImFahrstuhl = new Vector<Person>();
 	
 	//Initialisierung im Konstruktor
 	public Aufzug(int startpos, int aufzugId){
 		this.position = startpos;
 		this.altePosition = startpos;
+		
+		this.stockwerkAktuell = startpos;
+		this.stockwerkAlt = startpos;
+		
 		this.aufzugId = aufzugId;
 		this.gewichtMax = 900;
 		this.gewichtAktuell = 0;
 		this.groesseMax = 10;
 		this.groesseAktuell = 0;
 		this.inBewegung = false;
-		this.dauerBewegung = 0;
+		this.startBewegung = 0;
 	}
 	
 	//Weitere getter und setter - Ordnung kommt später (wahrscheinlich nicht :( )
 	public void setStockwerkVeraenderung() {
 		// Warum invertiert? -> von 0 zu 2 = -2?
-		stockwerkAenderung = altePosition-position;
+		stockwerkAenderung = stockwerkAlt - stockwerkAktuell;
 	}
 	
 	public int getStockwerkAktuell() {
-		return position;
+		return stockwerkAktuell;
 	}
 	
 	public int getStockwerkAlt() {
-		return altePosition;
+		return stockwerkAlt;
 	}
 	
 	public int getStockwerkVeraenderung() {
@@ -49,11 +55,11 @@ public class Aufzug {
 	}
 	
 	public long getDauerBewegung() {
-		return (System.currentTimeMillis() - dauerBewegung);
+		return (System.currentTimeMillis() - startBewegung);
 	}
 	
 	public void setBewegungStart() {
-		dauerBewegung = System.currentTimeMillis();
+		startBewegung = System.currentTimeMillis();
 	}
 	
 	public boolean getInBewegung() {
@@ -125,6 +131,14 @@ public class Aufzug {
 		if (position != this.position){
 			this.altePosition = this.position;
 			this.position = position;
+		}
+	}	
+	
+	public void setStockwerkNeu(int stockwerkNeu) {
+		// Abfrage sollte nicht notwendig sein, aber schaden kann es auch nicht - noch übernommen von Stefan
+		if (stockwerkNeu != this.stockwerkAktuell){
+			this.stockwerkAlt = this.stockwerkAktuell;
+			this.stockwerkAktuell = stockwerkNeu;
 		}
 	}	
 }
