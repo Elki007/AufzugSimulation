@@ -13,7 +13,7 @@ public class Simulation implements Runnable {
 	int anzPersProMin = 6;
 	int secBetweenSummon = (int)(60/anzPersProMin);
 	int summonTimer = 0;
-	int personenGarantiert = 1;
+	int personenGarantiert = 0;
 	int personenMaxInStockwerkZuBeginn = 1;  
 	int frame = 1; //seconds
 
@@ -75,7 +75,7 @@ public class Simulation implements Runnable {
 	
 	private void summonPerson() {
 		if (summonTimer >= secBetweenSummon) {
-        	int randomStockwerk = (int)((Math.random() * (settings.maxStockwerke)));
+        	int randomStockwerk = (int)(Math.random() * (settings.maxStockwerke));
 			stockwerke.get(randomStockwerk).leute.add(new Person(randomStockwerk, settings.maxStockwerke));
         	summonTimer = summonTimer % secBetweenSummon;            	
         }
@@ -367,12 +367,26 @@ public class Simulation implements Runnable {
 				// Stockwerk wird durch erste Person ermittelt -> sonst Zufall
 				if (einAufzug.getAnzahlLeuteInFahrstuhl() > 0) {
 					stockwerkNeu = einAufzug.getPersonAnPosition(0).zielStockwerk;
+					
 				} else {
-					// Zufälliger Stockwerk
-					stockwerkNeu = r.nextInt(settings.maxStockwerke);
-					while (stockwerkNeu == einAufzug.getPosition()) {
-						stockwerkNeu = r.nextInt(settings.maxStockwerke);
+					// Falls keine Person gefunden wird, fährt Fahrstuhl ins 0. Stockwerk 
+					stockwerkNeu = 0;
+					
+					// Suche Stockwerk mit wartender Person
+					boolean personGefunden = false;
+					
+					// Suche alle Stockwerke nach einer wartenden Person ab
+					for(int i = 0; i < settings.maxStockwerke; i++) {
+						for (Person wartendePerson : stockwerke.get(i).leute) {
+							if (wartendePerson.status == Status.wait) {
+								stockwerkNeu = i;
+								personGefunden = true;
+								break;
+							}
+						}
+						if (personGefunden) break;
 					}
+					
 				}
 				
 				// Zufälliges Stockwerk wird gesetzt

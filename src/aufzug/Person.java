@@ -16,15 +16,14 @@ public class Person {
 		einausStiegZ = (int)(3 + 10 * Math.random());
 		startStockwerk = start;
 		status = Status.wait;
-		zielStockwerk = (int)(Math.random() * maxStockwerk);
-		
+		zielStockwerk = (int)(Math.random() * maxStockwerk);		
 		amZiel = false;
 		
 		// Bei gleichem Start und Zielstockwerk -> erneute zufällige Zielstockwerksuche
 		// Abbruch nach 1000 Versuchen 
 		int tmp = 0;
 		while(zielStockwerk == startStockwerk) {
-			zielStockwerk = (int)(1 + (Math.random() * ((maxStockwerk-1) + 1)));
+			zielStockwerk = (int)(Math.random() * maxStockwerk);
 			if (tmp > 1000) {
 				System.out.println("Fehler: Zielstockwerk nach 1000 Versuchen nicht anders als Startstockwerk.");
 				break;
