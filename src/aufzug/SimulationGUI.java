@@ -79,7 +79,7 @@ public class SimulationGUI extends Stage implements Observer{
 			
 			//System.out.println("pos="+pos+"  Rev="+iReverted+" ");
 			aufzuge[i] = new Rectangle(50 + i * 60, iReverted*stockwerkHohe, 50, stockwerkHohe);
-			aufzuge[i].setFill(Color.AQUA); 
+			aufzuge[i].setFill(Color.BLACK); 
 		}
 	}
 	
@@ -168,15 +168,18 @@ public class SimulationGUI extends Stage implements Observer{
 				iiReverted = Math.abs(i-settings.maxStockwerke +1 );
 				
 				humans.add(new Circle(settings.w -100 - 30*number, stockwerkHohe*(iiReverted+0.5),radius));
-				if (current.get(number).geduld<=4) { //frame
+				humans.get(overall).setFill(Color.BLACK);
+				
+				if (current.get(number).status == Status.goHome) { //frame
 					humans.get(overall).setFill(Color.RED);
-				}else {
-					humans.get(overall).setFill(Color.BLACK);
+				}
+				if (current.get(number).status == Status.home) { //frame
+					humans.get(overall).setFill(Color.CHARTREUSE);
 				}
 				if (current.get(number).status == Status.eingestiegen) {
 					humans.get(overall).setFill(Color.WHITE);
 				}
-				if (current.get(number).amZiel == true) {
+				if (current.get(number).status == Status.ausgestiegen || current.get(number).status == Status.steigAus) {
 					humans.get(overall).setFill(Color.GREEN);
 				}
 				//if (current.get(number).home == false || current.get(number).eingestiegen == true )

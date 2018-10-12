@@ -80,6 +80,15 @@ public class Simulation implements Runnable {
         	summonTimer = summonTimer % secBetweenSummon;            	
         }
 	}
+	private void unsummonPerson(){
+		for (int i = 0; i < settings.maxStockwerke; i++) {
+			for (int j = stockwerke.get(i).leute.size()-1; j >= 0 ; j--) {
+				if (stockwerke.get(i).leute.get(j).status == Status.home || stockwerke.get(i).leute.get(j).status == Status.eingestiegen) {
+					stockwerke.get(i).leute.remove(j);
+				}
+			}
+		}
+	}
 	
 	// Vermindert Geduld und gibt Anzahl der Personen pro Stockwerk aus
 	private void updateLoyalty() {
@@ -213,7 +222,7 @@ public class Simulation implements Runnable {
 			}
 			summonPerson();
 			updateLoyalty();
-			
+			unsummonPerson();
 			/*
 			 * Aufzüge werden wieder in Bereitschaft gesetzt, wenn sie in einem Stockwerk angekommen sind
 			 * 
