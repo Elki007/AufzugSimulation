@@ -13,9 +13,9 @@ public class Simulation implements Runnable {
 	int anzPersProMin = 6;
 	int secBetweenSummon = (int)(60/anzPersProMin);
 	int summonTimer = 0;
-	int personenGarantiert = 5;
-	int personenMaxInStockwerkZuBeginn = 3;  
-	int frame = 5; //seconds
+	int personenGarantiert = 1;
+	int personenMaxInStockwerkZuBeginn = 1;  
+	int frame = 1; //seconds
 
 	private Aufzug[] aufzuege;
 	
@@ -92,6 +92,48 @@ public class Simulation implements Runnable {
         }
         //System.out.print("\n");
 	}
+	
+	private void einUndAussteigen() {
+		for (Aufzug aufzug : aufzuege) {
+			// Wenn Aufzug nicht in Bewegung
+			if (aufzug.getInBewegung() == false) {
+				// Gehe Leute im Stockwerk vom Aufzug durch (von hinten beginnend)
+				int zaehltEinsteiger = 0;
+				for (int i = (stockwerke.get(aufzug.getPosition()).leute.size()-1); i >= 0; i--) {
+					// Wenn Person nicht am Ziel
+					if (stockwerke.get(aufzug.getPosition()).leute.get(i).amZiel == false) {
+						// Person steigt ein, wenn es nicht Zielstockwerk ist
+						aufzug.setPersonSteigtEin(stockwerke.get(aufzug.getPosition()).leute.get(i));
+						// Person verlässt somit Stockwerk
+						stockwerke.get(aufzug.getPosition()).leute.remove(i);
+						zaehltEinsteiger++;
+					}
+				}
+				
+				// Ist eine Personen im Aufzug am Ziel? (von hinten beginnend)
+				int zaehltAussteiger = 0;
+				for (int i = (aufzug.getAnzahlLeuteInFahrstuhl() - 1); i >= 0; i--) {
+					// Wenn eine Person ihr Zielstockwerk erreicht 
+					if (aufzug.getPersonAnPosition(i).zielStockwerk == aufzug.getPosition()) {
+						// Person ist am Ziel
+						aufzug.getPersonAnPosition(i).amZiel = true;
+						// Steigt in Stockwerk ein & aus Auszug aus
+						stockwerke.get(aufzug.getPosition()).leute.add(aufzug.getPersonAnPosition(i));
+						aufzug.setPersonAnPositionSteigtAus(i);
+						
+						// Meldung, dass Person in Stockwerk x ausgestiegen ist
+						zaehltAussteiger++;
+					}
+				}
+				// Debug-Ausgabe, wenn jemand ein-/aussteigt
+				if (zaehltEinsteiger > 0) 
+					System.out.println("Personen die in Stockwerk " + aufzug.getPosition() + " in A" + aufzug.getId() + " eingestiegen sind: " + zaehltEinsteiger);
+				if (zaehltAussteiger > 0) 
+					System.out.println("Personen die in Stockwerk " + aufzug.getPosition() + " aus A" + aufzug.getId() + " ausgestiegen sind: " + zaehltAussteiger);
+				if (zaehltEinsteiger > 0 || zaehltAussteiger > 0) System.out.println();
+			}
+		}	
+	}
 
 	@Override
 	public void run() {
@@ -127,45 +169,7 @@ public class Simulation implements Runnable {
 			/*
 			 *  Ein- und Aussteigen von Leuten in Aufzüge
 			 */
-			for (Aufzug aufzug : aufzuege) {
-				// Wenn Aufzug nicht in Bewegung
-				if (aufzug.getInBewegung() == false) {
-					// Gehe Leute im Stockwerk vom Aufzug durch (von hinten beginnend)
-					int zaehltEinsteiger = 0;
-					for (int i = (stockwerke.get(aufzug.getPosition()).leute.size()-1); i >= 0; i--) {
-						// Wenn Person nicht am Ziel
-						if (stockwerke.get(aufzug.getPosition()).leute.get(i).amZiel == false) {
-							// Person steigt ein, wenn es nicht Zielstockwerk ist
-							aufzug.setPersonSteigtEin(stockwerke.get(aufzug.getPosition()).leute.get(i));
-							// Person verlässt somit Stockwerk
-							stockwerke.get(aufzug.getPosition()).leute.remove(i);
-							zaehltEinsteiger++;
-						}
-					}
-					
-					// Ist eine Personen im Aufzug am Ziel? (von hinten beginnend)
-					int zaehltAussteiger = 0;
-					for (int i = (aufzug.getAnzahlLeuteInFahrstuhl() - 1); i >= 0; i--) {
-						// Wenn eine Person ihr Zielstockwerk erreicht 
-						if (aufzug.getPersonAnPosition(i).zielStockwerk == aufzug.getPosition()) {
-							// Person ist am Ziel
-							aufzug.getPersonAnPosition(i).amZiel = true;
-							// Steigt in Stockwerk ein & aus Auszug aus
-							stockwerke.get(aufzug.getPosition()).leute.add(aufzug.getPersonAnPosition(i));
-							aufzug.setPersonAnPositionSteigtAus(i);
-							
-							// Meldung, dass Person in Stockwerk x ausgestiegen ist
-							zaehltAussteiger++;
-						}
-					}
-					// Debug-Ausgabe, wenn jemand ein-/aussteigt
-					if (zaehltEinsteiger > 0) 
-						System.out.println("Personen die in Stockwerk " + aufzug.getPosition() + " in A" + aufzug.getId() + " eingestiegen sind: " + zaehltEinsteiger);
-					if (zaehltAussteiger > 0) 
-						System.out.println("Personen die in Stockwerk " + aufzug.getPosition() + " aus A" + aufzug.getId() + " ausgestiegen sind: " + zaehltAussteiger);
-					if (zaehltEinsteiger > 0 || zaehltAussteiger > 0) System.out.println();
-				}
-			}				
+			einUndAussteigen();
 			
 			
 			
