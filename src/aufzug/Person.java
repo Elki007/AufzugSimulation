@@ -16,7 +16,7 @@ public class Person {
 		einausStiegZ = (int)(3 + 10 * Math.random());
 		startStockwerk = start;
 		status = Status.wait;
-		zielStockwerk = (int)(1 + (Math.random() * ((maxStockwerk-1) + 1)));
+		zielStockwerk = (int)(Math.random() * maxStockwerk);
 		
 		amZiel = false;
 		
