@@ -108,11 +108,17 @@ public class Simulation implements Runnable {
 			
 			/*
 			 * Überprüfung, ob ein Aufzug schon im Zielstockwerk angekommen ist -> inBewegung -> false
+			 * Gedanke:
+			 * - ab .setBewegungStart() wird gezählt
+			 * - Aufzug überquert x Stockwerke in bestimmter Zeit -> abs(Stockwerkänderung) * Stockwerkzeit
+			 * - dazu werden 2 Wartesekunden addiert
+			 * - inwiefern ist frame bzw. Aktualisierungsrate zu beachten? Eigentlich nicht weiter - gibt zwar den nächsten Anstoß und könnte kleiner sein, aber nicht wichtig
 			 */
 			for (Aufzug aufzug : aufzuege) {
 				if (aufzug.getInBewegung() == true) {
-					// Dauer der Bewegung mit Stockwerkänderung * Stockwerkzeit abgleichen
-					// Ist Zeit überschritten -> inBewegung -> false
+					if (aufzug.getDauerBewegung() > (2 + (Math.abs(aufzug.getStockwerkVeraenderung()) * aufzug.getDAUER_PRO_STOCK()))) {
+						aufzug.setInBewegung(false);
+					}
 				}
 			}
 			
@@ -180,16 +186,23 @@ public class Simulation implements Runnable {
 					// Zufälliges Stockwerk wird gesetzt
 					aufzuege[aufzugZufaellig].setPosition(stockwerkZufaellig);
 					
+					// neu (noch nicht komplett umgesetzt) - noch muss auch Stefans setPosition verwendet werden
+					// reicht erst einmal, wenn es dazu benutzt werden kann, um "inBewegung" zu steuern
+					aufzuege[aufzugZufaellig].setStockwerkNeu(stockwerkZufaellig);
+					
 					// Problem: Aufzüge müssten nach Stockwerkzeit * Positionsveränderung wieder inBewegung->false gesetzt werden
 					// Aktuell: Jeder Aufzug fährt nur einmal
 					aufzuege[aufzugZufaellig].setInBewegung(true);
 					aufzuege[aufzugZufaellig].setBewegungStart();
 					
+					System.out.println("A" + aufzuege[aufzugZufaellig].getId() + " Aktuell: " + aufzuege[aufzugZufaellig].getStockwerkAktuell());
+					System.out.println("A" + aufzuege[aufzugZufaellig].getId() + " Alt: " + aufzuege[aufzugZufaellig].getStockwerkAlt());
+					aufzuege[aufzugZufaellig].setStockwerkVeraenderung();
+					System.out.println("A" + aufzuege[aufzugZufaellig].getId() + " Unterschied: " + aufzuege[aufzugZufaellig].getStockwerkVeraenderung());
+					System.out.println();
 					
-					
-					
-					// Ohne break; wird für alle Aufzüge ein neues Ziel ermittelt (100 Versuche aus der Aufzugwahl)
-					break;
+					// Ohne "break;" wird für alle Aufzüge ein neues Ziel ermittelt (100 Versuche aus der Aufzugwahl)
+					//break;
 				}
 				gegenEndlosSchleife++;
 			}

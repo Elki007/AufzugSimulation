@@ -55,7 +55,7 @@ public class Aufzug {
 	}
 	
 	public long getDauerBewegung() {
-		return (System.currentTimeMillis() - startBewegung);
+		return (System.currentTimeMillis() - startBewegung) / 1000;
 	}
 	
 	public void setBewegungStart() {
