@@ -132,8 +132,8 @@ public class Simulation implements Runnable {
 						aufzug.setPersonSteigtEin(stockwerke.get(aufzug.getPosition()).leute.get(i));
 						// Person verlässt somit Stockwerk
 						//stockwerke.get(aufzug.getPosition()).leute.remove(i);
-						if (stockwerke.get(aufzug.getPosition()).leute.get(i).eingestiegen == false) {
-							stockwerke.get(aufzug.getPosition()).leute.get(i).steigEin = true;
+						if (stockwerke.get(aufzug.getPosition()).leute.get(i).status != Status.eingestiegen) {
+							stockwerke.get(aufzug.getPosition()).leute.get(i).status = Status.steigEin;
 						}
 						zaehltEinsteiger++;
 					}
@@ -158,6 +158,7 @@ public class Simulation implements Runnable {
 					if (aufzug.getPersonAnPosition(i).zielStockwerk == aufzug.getPosition()) {
 						// Person ist am Ziel
 						aufzug.getPersonAnPosition(i).amZiel = true;
+						aufzug.getPersonAnPosition(i).status = Status.steigAus;
 						// Steigt in Stockwerk ein & aus Auszug aus
 						stockwerke.get(aufzug.getPosition()).leute.add(aufzug.getPersonAnPosition(i));
 						aufzug.setPersonAnPositionSteigtAus(i);
@@ -189,11 +190,11 @@ public class Simulation implements Runnable {
 		}
 	}
 	
-	// Wartezeit beginnt und endet nach WartezeitMax vom Aufzug
+	// Wartezeit beginnt und endet nach 10 Sekunden
 	private void aufzuegeWarten() {
 		for (Aufzug aufzug : aufzuege) {
 			if (aufzug.getWartend() == true) {
-				if (aufzug.getDauerWartezeit() > aufzug.getWartezeitMax()) {
+				if (aufzug.getDauerWartezeit() > 10) {
 					aufzug.setWartet(false);
 				}
 			}
@@ -206,7 +207,7 @@ public class Simulation implements Runnable {
 		while (true){
 			try {
 				Thread.sleep(frame*1000);
-				summonTimer +=4;
+				summonTimer += frame;
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
