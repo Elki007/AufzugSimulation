@@ -121,7 +121,8 @@ public class Simulation implements Runnable {
 	private void leuteSteigenEin_2() {
 		for (Aufzug aufzug : aufzuege) {
 			// Wenn Aufzug nicht in Bewegung
-			if (aufzug.getInBewegung() == false) {
+			// Einsteigen möglich, wenn Aufzug mindestens 1 Sek. wartend und maximal 1 Sekunde vor losfahren (Türöffnungszeit)
+			if (aufzug.getWartend() == true && aufzug.getDauerWartezeit() > 1 && aufzug.getDauerWartezeit() < aufzug.getWartezeitMax() - 1) {
 				// Gehe Leute im Stockwerk vom Aufzug durch (von hinten beginnend)
 				int zaehltEinsteiger = 0;
 				for (int i = (stockwerke.get(aufzug.getPosition()).leute.size()-1); i >= 0; i--) {

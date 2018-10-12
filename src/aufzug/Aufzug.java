@@ -18,6 +18,7 @@ public class Aufzug {
 	private boolean inBewegung;
 	private long startBewegung;
 	private boolean wartend;
+	private int wartezeitMax;
 	private long startWartezeit;
 	private Vector<Person> leuteImFahrstuhl = new Vector<Person>();
 	
@@ -36,6 +37,7 @@ public class Aufzug {
 		this.groesseAktuell = 0;
 		this.inBewegung = false;
 		this.wartend = true;
+		this.wartezeitMax = 5;
 	}
 	
 	//Weitere getter und setter - Ordnung kommt später (wahrscheinlich nicht :( )
@@ -158,5 +160,9 @@ public class Aufzug {
 			this.stockwerkAlt = this.stockwerkAktuell;
 			this.stockwerkAktuell = stockwerkNeu;
 		}
+	}
+
+	public int getWartezeitMax() {
+		return wartezeitMax;
 	}	
 }
