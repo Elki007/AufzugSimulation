@@ -189,11 +189,11 @@ public class Simulation implements Runnable {
 		}
 	}
 	
-	// Wartezeit beginnt und endet nach 10 Sekunden
+	// Wartezeit beginnt und endet nach WartezeitMax vom Aufzug
 	private void aufzuegeWarten() {
 		for (Aufzug aufzug : aufzuege) {
 			if (aufzug.getWartend() == true) {
-				if (aufzug.getDauerWartezeit() > 10) {
+				if (aufzug.getDauerWartezeit() > aufzug.getWartezeitMax()) {
 					aufzug.setWartet(false);
 				}
 			}
