@@ -250,9 +250,7 @@ public class Simulation implements Runnable {
 			/*
 			 *  Bewegungsänderungen für wartende Aufzüge
 			 */
-			wartendeAufzuegeBekommenStockwerk();
-			
-					
+			wartendeAufzuegeBekommenStockwerkOhneWhile();
 			
 			/*
 			 * Experiment mit Zeit
@@ -353,6 +351,57 @@ public class Simulation implements Runnable {
 				//break;
 			}
 			gegenEndlosSchleife++;
+		}
+	}
+	
+	private void wartendeAufzuegeBekommenStockwerkOhneWhile() {
+		// TODO Auto-generated method stub
+
+		// Zufälliger Aufzug wird ausgewählt (mit inBewegung -> false) - 100 Versuche
+		int stockwerkNeu;
+		
+		// Es wird ein Aufzug gesucht, der nicht in Bewegung ist
+		// Für diesen Aufzug wird ein zufälliges Ziel gesucht und das Stockwerk als neue Position gesetzt
+		for(Aufzug einAufzug : aufzuege) {
+			if (einAufzug.getInBewegung() == false && einAufzug.getWartend() == false) {
+				// Stockwerk wird durch erste Person ermittelt -> sonst Zufall
+				if (einAufzug.getAnzahlLeuteInFahrstuhl() > 0) {
+					stockwerkNeu = einAufzug.getPersonAnPosition(0).zielStockwerk;
+				} else {
+					// Zufälliger Stockwerk
+					stockwerkNeu = r.nextInt(settings.maxStockwerke);
+					while (stockwerkNeu == einAufzug.getPosition()) {
+						stockwerkNeu = r.nextInt(settings.maxStockwerke);
+					}
+				}
+				
+				// Zufälliges Stockwerk wird gesetzt
+				einAufzug.setPosition(stockwerkNeu);
+				
+				// neu (noch nicht komplett umgesetzt) - noch muss auch Stefans setPosition verwendet werden
+				// reicht erst einmal, wenn es dazu benutzt werden kann, um "inBewegung" zu steuern
+				einAufzug.setStockwerkNeu(stockwerkNeu);
+				
+				// Problem: Aufzüge müssten nach Stockwerkzeit * Positionsveränderung wieder inBewegung->false gesetzt werden
+				// Aktuell: Jeder Aufzug fährt nur einmal
+				einAufzug.setInBewegung(true);
+				einAufzug.setBewegungStart();
+				
+				einAufzug.setStockwerkVeraenderung();
+				
+				// Debug-Ausgabe "A0 fährt jetzt: 1 -> 3"
+				System.out.println("A" + einAufzug.getId() + " fährt jetzt: " + einAufzug.getStockwerkAlt() + " -> " + einAufzug.getStockwerkAktuell());
+				
+				/*
+				System.out.println("A" + aufzuege[aufzugZufaellig].getId() + " Aktuell: " + aufzuege[aufzugZufaellig].getStockwerkAktuell());
+				System.out.println("A" + aufzuege[aufzugZufaellig].getId() + " Alt: " + aufzuege[aufzugZufaellig].getStockwerkAlt());
+				System.out.println("A" + aufzuege[aufzugZufaellig].getId() + " Unterschied: " + aufzuege[aufzugZufaellig].getStockwerkVeraenderung());
+				System.out.println();
+				*/
+				
+				// Ohne "break;" wird für alle Aufzüge ein neues Ziel ermittelt (100 Versuche aus der Aufzugwahl)
+				//break;
+			}
 		}
 		
 	}
