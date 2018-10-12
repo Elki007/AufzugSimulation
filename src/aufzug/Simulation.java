@@ -194,7 +194,7 @@ public class Simulation implements Runnable {
 	private void aufzuegeWarten() {
 		for (Aufzug aufzug : aufzuege) {
 			if (aufzug.getWartend() == true) {
-				if (aufzug.getDauerWartezeit() > 10) {
+				if (aufzug.getDauerWartezeit() > aufzug.getWartezeitMax()) {
 					aufzug.setWartet(false);
 				}
 			}
